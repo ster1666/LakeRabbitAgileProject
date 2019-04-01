@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1086615060978",
+    "firebase_url": "https://agiltprojekt.firebaseio.com",
+    "project_id": "agiltprojekt",
+    "storage_bucket": "agiltprojekt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1086615060978:android:3fafc711b2ad2fae",
+        "android_client_info": {
+          "package_name": "com.example.lakebaikal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1086615060978-d5ljndlopaud87sd0bjq4fjdhjgkm6vr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYA7Y2HXqkcLP-ytAJ0JrHRyk4y9UUeBM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
