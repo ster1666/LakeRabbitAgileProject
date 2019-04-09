@@ -15,12 +15,8 @@
       },
       "oauth_client": [
         {
-          "client_id": "1086615060978-323mtpt0oletur6nvqeenae8g2iivcim.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.lakebaikal",
-            "certificate_hash": "8dd56fb26b2d95d182eff0a1d43c539ee3f84d34"
-          }
+          "client_id": "1086615060978-d5ljndlopaud87sd0bjq4fjdhjgkm6vr.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
@@ -29,13 +25,15 @@
         }
       ],
       "services": {
+        "analytics_service": {
+          "status": 1
+        },
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1086615060978-d5ljndlopaud87sd0bjq4fjdhjgkm6vr.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
         }
       }
     }
