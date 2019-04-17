@@ -15,6 +15,38 @@
       },
       "oauth_client": [
         {
+          "client_id": "1086615060978-323mtpt0oletur6nvqeenae8g2iivcim.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakebaikal",
+            "certificate_hash": "8dd56fb26b2d95d182eff0a1d43c539ee3f84d34"
+          }
+        },
+        {
+          "client_id": "1086615060978-v8m2hurijoaqla82urlthu5rpu4oukhk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakebaikal",
+            "certificate_hash": "4fdad6121bf6a5f0f68c06ba55a79b35c9cb633c"
+          }
+        },
+        {
+          "client_id": "1086615060978-7rsc7a5ag2kc1jq5lq6f050202fms9cf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakebaikal",
+            "certificate_hash": "8ff398a41ba01108294afc1848c81093e4d1f365"
+          }
+        },
+        {
+          "client_id": "1086615060978-phga4ohoav8r1dn1cpu6bh1jlgcioahu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakebaikal",
+            "certificate_hash": "19cd4dcfec44d4a5aeb83851d2bedd4b35fa8773"
+          }
+        },
+        {
           "client_id": "1086615060978-d5ljndlopaud87sd0bjq4fjdhjgkm6vr.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -25,15 +57,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1086615060978-d5ljndlopaud87sd0bjq4fjdhjgkm6vr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

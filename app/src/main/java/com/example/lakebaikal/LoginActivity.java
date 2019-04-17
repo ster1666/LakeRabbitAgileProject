@@ -52,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private SignInButton googleSignInButton;
 
-    private static final int RC_SIGN_IN = 123;
+    private static final int RC_SIGN_IN = 1;
     private static final String TAG = "LoginActivity";
 
     @Override
@@ -79,21 +79,17 @@ public class LoginActivity extends AppCompatActivity {
                 new AuthUI.IdpConfig.GoogleBuilder().build());
 
         // Create and launch sign-in intent
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                RC_SIGN_IN);
+        this.startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(),RC_SIGN_IN);
+        Log.d("LOG", "##################createSignInIntent: ");
         // [END auth_fui_create_intent]
     }
 
     // [START auth_fui_result]
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.d(TAG, "onActivityResult: ");
         if (requestCode == RC_SIGN_IN) {
+            Log.d("LOG", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!onActivityResult: ");
             IdpResponse response = IdpResponse.fromResultIntent(data);
 
             if (resultCode == RESULT_OK) {
