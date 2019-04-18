@@ -79,7 +79,12 @@ public class LoginActivity extends AppCompatActivity {
                 new AuthUI.IdpConfig.GoogleBuilder().build());
 
         // Create and launch sign-in intent
-        this.startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().build(),RC_SIGN_IN);
+        this.startActivityForResult(AuthUI
+                .getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .build()
+                ,RC_SIGN_IN);
         Log.d("LOG", "##################createSignInIntent: ");
         // [END auth_fui_create_intent]
     }
