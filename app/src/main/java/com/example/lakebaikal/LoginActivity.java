@@ -10,7 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -86,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                         .setAvailableProviders(providers)
                         .build()
                 ,RC_SIGN_IN);
-        Log.d("LOG", "##################createSignInIntent: ");
         // [END auth_fui_create_intent]
     }
 
@@ -95,31 +96,23 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult: ");
         if (requestCode == RC_SIGN_IN) {
-            Log.d("LOG", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!onActivityResult: ");
             final IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                final String userbt = FirebaseAuth.getInstance().getUid();
-//                Log.d(TAG, "onActivityResult: TTTTTTTTTTTTTTTTTTTTTTTTTTTT"+ userbt);
-                //Log.d(TAG, user.getDisplayName());
-
-                Log.d(TAG, "onActivityResult: userid: "+user.getUid()+" EMAIL: "+user.getEmail()+" NAME: "+user.getDisplayName());
-                //check if new user or user have child in firebase
-
                 users.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         if(response.isNewUser())
                         {
-                            Log.d(TAG, "onActivityResult: NEEEEEEEEEEEEEEEEEEEEEEEEEEW");
+                            Log.d(TAG, "onActivityResult: NEW");
                             btAddrPopup(LoginActivity.this,user,users);
 
                         }
                         else
                         {
-                            Log.d(TAG, "onActivityResult: OOOOOOOOOOOOOOOLD " + user.getUid());
+                            Log.d(TAG, "onActivityResult: OLD " + user.getUid());
                             Intent homeActivity = new Intent(LoginActivity.this, com.example.lakebaikal.homeActivity.class);
 
                             bt_addr = users.getKey();
@@ -143,21 +136,33 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+    //TODO check if address regex is OK otherwise do again.... XX:XX:XX:XX:XX:XX
+    public static InputFilter addressfilter = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            String blockCharacterSet = "~#&^|$%*!@/()-'\";,?{}=!$^';,?×+.÷<>{}€£¥₩%~`¤♡♥_|《》¡¿°•○●□■◇◆♧♣▲▼▶◀↑↓←→☆★▪-);-)--('(";
+            if (source != null && blockCharacterSet.contains(("" + source))) {
+                return "";
+            }
+            return null;
+        }
+    };
     public static void btAddrPopup(final Context context, final FirebaseUser user, final DatabaseReference users) {
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle("Bluetooth");
         alertDialog.setMessage("Please register your bluetooth adress");
         final String oldbtaddr = bt_addr;
         final EditText input = new EditText(context);
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        //TODO check if address regex is OK otherwise do again.... XX:XX:XX:XX:XX:XX
+        input.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setFilters(new InputFilter[] { addressfilter });
         alertDialog.setView(input);
 
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        //TODO check if address regex is OK otherwise do again....
+                        //TODO check if address regex is OK otherwise do again.... XX:XX:XX:XX:XX:XX
                         bt_addr =String.valueOf(input.getText().toString().toUpperCase());
                         if(btaddrstate){
                             Log.d(TAG, "btaddr: new");
@@ -179,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
                                         int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(oldbtaddr).child("passes").getValue()));
                                         users.child(bt_addr).child("passes").setValue(temppasses);
 
-                                        
+
                                         users.child(oldbtaddr).removeValue();
 
                                     }}
