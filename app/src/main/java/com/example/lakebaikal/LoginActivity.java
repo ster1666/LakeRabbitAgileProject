@@ -1,18 +1,25 @@
 package com.example.lakebaikal;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.SignInButton;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,7 +28,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,22 +41,32 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "LoginActivity";
 
+    public static boolean btaddrstate=true;
+
     private FirebaseDatabase database;
     private DatabaseReference users;
+
+    public BluetoothManager bm;
+    public BluetoothAdapter btAdapter = null;
+
+    public static String  bt_addr = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        bm = (BluetoothManager) getSystemService( Context.BLUETOOTH_SERVICE );
+        btAdapter = bm.getAdapter();
+        btcheck(this,btAdapter);
         googleSignInButton = findViewById(R.id.google_sign_in_button);
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
-
         googleSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Add google sign in functionality
+
                 createSignInIntent();
             }
         });
@@ -65,10 +81,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // Create and launch sign-in intent
         this.startActivityForResult(AuthUI
-                .getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .build()
+                        .getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build()
                 ,RC_SIGN_IN);
         Log.d("LOG", "##################createSignInIntent: ");
         // [END auth_fui_create_intent]
@@ -80,44 +96,46 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "onActivityResult: ");
         if (requestCode == RC_SIGN_IN) {
             Log.d("LOG", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!onActivityResult: ");
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
+            final IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-               final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                Log.d(TAG, user.getDisplayName());
+                final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                final String userbt = FirebaseAuth.getInstance().getUid();
+//                Log.d(TAG, "onActivityResult: TTTTTTTTTTTTTTTTTTTTTTTTTTTT"+ userbt);
+                //Log.d(TAG, user.getDisplayName());
+
+                Log.d(TAG, "onActivityResult: userid: "+user.getUid()+" EMAIL: "+user.getEmail()+" NAME: "+user.getDisplayName());
+                //check if new user or user have child in firebase
 
                 users.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(!dataSnapshot.hasChild(user.getUid())){
-                            users.child(user.getUid())
-                                    .setValue(new User(user.getUid(), user.getDisplayName(), user.getEmail()));
 
-                            Intent homeActivity = new Intent(LoginActivity.this,MainActivity.class);
+                        if(response.isNewUser())
+                        {
+                            Log.d(TAG, "onActivityResult: NEEEEEEEEEEEEEEEEEEEEEEEEEEW");
+                            btAddrPopup(LoginActivity.this,user,users);
 
-                            //Pass User id to MainActivity
-                            homeActivity.putExtra("userId", user.getUid());
+                        }
+                        else
+                        {
+                            Log.d(TAG, "onActivityResult: OOOOOOOOOOOOOOOLD " + user.getUid());
+                            Intent homeActivity = new Intent(LoginActivity.this, com.example.lakebaikal.homeActivity.class);
 
-                            startActivity(homeActivity);
-                            finish();
-
-                        }else{
-                            Intent homeActivity = new Intent(LoginActivity.this,MainActivity.class);
-
-                            //Pass User id to MainActivity
-                            homeActivity.putExtra("userId", user.getUid());
+                            bt_addr = users.getKey();
+                            Log.d(TAG, "onActivityResult: "+ bt_addr);
 
                             startActivity(homeActivity);
                             finish();
+
                         }
                     }
 
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
-                });
+                }
+            });
             } else {
                 Log.d(TAG, "SIGN IN FAILED");
 
@@ -125,5 +143,69 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
+    public static void btAddrPopup(final Context context, final FirebaseUser user, final DatabaseReference users) {
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        alertDialog.setTitle("Bluetooth");
+        alertDialog.setMessage("Please register your bluetooth adress");
+        final String oldbtaddr = bt_addr;
+        final EditText input = new EditText(context);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        alertDialog.setView(input);
+
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        //TODO check if address regex is OK otherwise do again....
+                        bt_addr =String.valueOf(input.getText().toString().toUpperCase());
+                        if(btaddrstate){
+                            Log.d(TAG, "btaddr: new");
+                            users.child(bt_addr.toUpperCase()).setValue(new User(user.getUid(), user.getDisplayName(), user.getEmail(), bt_addr,0));
+                        }
+                        else
+                        {
+                            Log.d(TAG, "btaddr: change " + oldbtaddr);
+                            users.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    {
+                                        users.child(bt_addr.toUpperCase()).setValue(new User(user.getUid(), user.getDisplayName(),
+                                                user.getEmail(), bt_addr,Integer.valueOf(String.valueOf(dataSnapshot.child(oldbtaddr).child("balance").getValue()))));
+
+                                        String templastpayed = String.valueOf(dataSnapshot.child(oldbtaddr).child("lastPayed").getValue());
+                                        users.child(bt_addr).child("lastPayed").setValue(templastpayed);
+
+                                        int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(oldbtaddr).child("passes").getValue()));
+                                        users.child(bt_addr).child("passes").setValue(temppasses);
+
+                                        
+                                        users.child(oldbtaddr).removeValue();
+
+                                    }}
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
+                        }
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
+    }
+    public static void btcheck(Context context,BluetoothAdapter btAdapter){
+        // Check for Bluetooth support and then check to make sure it is turned on
+        if (btAdapter == null) {
+            Toast.makeText(context, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+        }
+        else {
+            if (!btAdapter.isEnabled()) {
+                //ask user to turn on bluetooth
+                Intent enableBtIntent = new Intent( BluetoothAdapter.ACTION_REQUEST_ENABLE );
+                context.startActivity(enableBtIntent);
+            }
+        }
+    }
+
 }
 
