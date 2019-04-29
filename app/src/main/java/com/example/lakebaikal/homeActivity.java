@@ -274,7 +274,9 @@ public class homeActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             {
                                 //NOT TESTED
-                                DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
+                                //DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
+                                DateFormat df = new SimpleDateFormat("HH:mm");
+                                long elapsed= 0;
                                 String time =(String)dataSnapshot.child(bt_addr).child("timestamp").getValue();
                                 if(time !=null)
                                 {
@@ -292,7 +294,14 @@ public class homeActivity extends AppCompatActivity {
                                     } catch (ParseException e) {
                                         e.printStackTrace();
                                     }
-                                    long elapsed = d2.getTime() - d1.getTime();
+                                    try
+                                    {
+                                        elapsed = d2.getTime() - d1.getTime();
+                                    }catch(Exception e)
+                                    {
+
+                                    }
+
                                     Log.d( TAG, "onDataChange: "+elapsed );
                                     if(elapsed >= 12)
                                     {
@@ -307,11 +316,13 @@ public class homeActivity extends AppCompatActivity {
                                         int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
                                         temppasses = temppasses +1;
                                         users.child(bt_addr).child("passes").setValue(temppasses);
-                                        getaccountinfo();
+
 
 
                                     }
+
                                 }
+                                getaccountinfo();
 
                             }}
                         @Override

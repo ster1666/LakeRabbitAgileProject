@@ -163,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         if(!Pattern.matches("..:..:..:..:..:..",input.getText()))
                         {
-                            Toast.makeText(context, "Your input doesnt match a bluetooth address\n please try again...", Toast.LENGTH_LONG).show();
+                            Toast.makeText(context, "Your input doesnt match a bluetooth address\n please try again...\n address example: XX:XX:XX:XX:XX:XX\n your see your bluetooth address in mobile settings", Toast.LENGTH_LONG).show();
                             btAddrPopup(context,user,users);
                         }
                         else
