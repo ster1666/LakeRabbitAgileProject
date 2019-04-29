@@ -26,8 +26,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import static com.example.lakebaikal.LoginActivity.bt_addr;
 
@@ -200,7 +202,7 @@ public class homeActivity extends AppCompatActivity {
     {
         if(LoginActivity.enableBT)
         {
-            Log.d("LOG", "btcheck: HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+            Log.d("LOG", "btcheck: ");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -243,18 +245,18 @@ public class homeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                    //TODO INSERT GPS CHECK IF YOU WANT TO DECREASE DISCOVERY TIME
-                    Method method;
-                    try {
-                        method = btAdapter.getClass().getMethod("setScanMode", int.class, int.class);
-                        method.invoke(btAdapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 0);
-                        Log.d("LOG", "run:                                      DISCOVERABLE");
+                //TODO INSERT GPS CHECK IF YOU WANT TO DECREASE DISCOVERY TIME
+                Method method;
+                try {
+                    method = btAdapter.getClass().getMethod("setScanMode", int.class, int.class);
+                    method.invoke(btAdapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 0);
+                    Log.d("LOG", "run:                                      DISCOVERABLE");
 
-                    } catch (Exception e) {
-                        Log.d(TAG, "run: DISCOVER BROKE");
-                        e.printStackTrace();
-                    }
-                    
+                } catch (Exception e) {
+                    Log.d(TAG, "run: DISCOVER BROKE");
+                    e.printStackTrace();
+                }
+
             }
         }).start();
 
@@ -271,25 +273,46 @@ public class homeActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             {
-
-                                if(dataSnapshot.child(bt_addr).child("timestamp").getValue() != dataSnapshot.child(bt_addr).child("lastPayed").getValue())
+                                //NOT TESTED
+                                DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
+                                String time =(String)dataSnapshot.child(bt_addr).child("timestamp").getValue();
+                                if(time !=null)
                                 {
-                                    //TODO check if X time is between timestamp to pay
-                                    DateFormat df = new SimpleDateFormat("dd/MM/yyyy,HH:mm");
-                                    String date = df.format( Calendar.getInstance().getTime());
+                                    String lasttime =(String)dataSnapshot.child(bt_addr).child("lastPayed").getValue();
 
-                                    users.child(bt_addr).child("lastPayed").setValue(date);
-                                    int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
-                                    tempbalance = tempbalance -100;// COST 100 WHEN PASSES
-                                    users.child(bt_addr).child("balance").setValue(tempbalance);
+                                    Date d1 = null;
+                                    try {
+                                        d1 = df.parse(time);
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Date d2 = null;
+                                    try {
+                                        d2 = df.parse(lasttime);
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    long elapsed = d2.getTime() - d1.getTime();
+                                    Log.d( TAG, "onDataChange: "+elapsed );
+                                    if(elapsed >= 12)
+                                    {
+//                                    DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
+//                                    String date = df.format( Calendar.getInstance().getTime());
 
-                                    int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
-                                    temppasses = temppasses +1;
-                                    users.child(bt_addr).child("passes").setValue(temppasses);
-                                    getaccountinfo();
+                                        users.child(bt_addr).child("lastPayed").setValue(time);
+                                        int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
+                                        tempbalance = tempbalance -100;// COST 100 WHEN PASSES
+                                        users.child(bt_addr).child("balance").setValue(tempbalance);
+
+                                        int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
+                                        temppasses = temppasses +1;
+                                        users.child(bt_addr).child("passes").setValue(temppasses);
+                                        getaccountinfo();
 
 
+                                    }
                                 }
+
                             }}
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
