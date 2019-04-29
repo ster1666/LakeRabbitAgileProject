@@ -44,7 +44,7 @@ public class homeActivity extends AppCompatActivity {
 
     private static final String TAG = "homeActivity";
     public BluetoothManager bm;
-    public BluetoothAdapter btAdapter = null;
+    public static BluetoothAdapter btAdapter = null;
 
     private FirebaseDatabase database;
     private DatabaseReference users;
@@ -63,19 +63,13 @@ public class homeActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+                    //mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
+                    //mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:
                     //mTextMessage.setText(R.string.title_notifications);
-                    try{
-                        getaccountinfo();
-                    }catch(Exception e)
-                    {
-
-                    }
 
                     return true;
             }
@@ -100,6 +94,8 @@ public class homeActivity extends AppCompatActivity {
         get_userBtaddr();
         discoverBT();
         checkTimestamp();
+        autoenableBT();
+
 
 
 
@@ -109,7 +105,7 @@ public class homeActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        btcheck(this,btAdapter);
+        autoenableBT();
         discoverBT();;
     }
 
@@ -126,6 +122,7 @@ public class homeActivity extends AppCompatActivity {
                             {
                                 LoginActivity.bt_addr = post.child("btaddr").getValue().toString();
                                 Log.d(TAG, "onDataChange: FOUND BTADDR "+LoginActivity.bt_addr);
+                                //TODO HANDLE IF YOUR ACCOUNT CANT BE FOUND IN FB
                             }
                         }catch(Exception e)
                         {
@@ -199,41 +196,70 @@ public class homeActivity extends AppCompatActivity {
                 });
         alertDialog.show();
     }
-    //check bluetooth permission and support
-    public void discoverBT() {
-        // Check for Bluetooth support and then check to make sure it is turned on
-        if(btAdapter.isEnabled()) {
-            //run discoverable method
+    public void autoenableBT()
+    {
+        if(LoginActivity.enableBT)
+        {
+            Log.d("LOG", "btcheck: HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     while(!Thread.currentThread().isInterrupted())
                     {
-                        //TODO INSERT GPS CHECK IF YOU WANT TO DECREASE DISCOVERY TIME
+                        Log.d("LOG", "btcheck:");
+                        if(!btAdapter.isEnabled())
+                        {
+                            Log.d("LOG", "run: BLUETOOTH AUTOMATICLY ACTIVATED!!!");
+                            btAdapter.enable();
+                            try{
+                                discoverBT();
+                            }catch(Exception e)
+                            {
 
-                        Method method;
-                        try {
-                            method = btAdapter.getClass().getMethod("setScanMode", int.class, int.class);
-                            method.invoke(btAdapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 0);
-                            Log.d("LOG", "run:                                      DISCOVERABLE");
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            }
                         }
                         try {
-                            Thread.sleep(120000);
+                            Thread.sleep(2500);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                     }
-
                 }
             }).start();
         }
-        else
-        {
-            btcheck(this,btAdapter);
-        }
+    }
+    //check bluetooth permission and support
+    public void discoverBT() {
+        // Check for Bluetooth support and then check to make sure it is turned on
+
+        //run discoverable method
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(!Thread.currentThread().isInterrupted())
+                {
+                    //TODO INSERT GPS CHECK IF YOU WANT TO DECREASE DISCOVERY TIME
+
+                    Method method;
+                    try {
+                        method = btAdapter.getClass().getMethod("setScanMode", int.class, int.class);
+                        method.invoke(btAdapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 0);
+                        Log.d("LOG", "run:                                      DISCOVERABLE");
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        Thread.sleep(120000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }).start();
+
     }
     //check timestamp and payment
     public void checkTimestamp(){
@@ -264,6 +290,7 @@ public class homeActivity extends AppCompatActivity {
                                     users.child(bt_addr).child("passes").setValue(temppasses);
                                     getaccountinfo();
 
+
                                 }
                             }}
                         @Override
@@ -271,7 +298,6 @@ public class homeActivity extends AppCompatActivity {
 
                         }
                     });
-
                     try {
                         Thread.sleep(10000);//HOW OFTEN TO CHECK TIMESTAMP
                     } catch (InterruptedException e) {
@@ -282,6 +308,7 @@ public class homeActivity extends AppCompatActivity {
             }
         }).start();
     }
+    //temp function to get account information
     public void getaccountinfo() {
 
         users.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -293,6 +320,7 @@ public class homeActivity extends AppCompatActivity {
                     String tempname = String.valueOf(dataSnapshot.child(bt_addr).child("fullname").getValue());
                     String tempaddress = String.valueOf(dataSnapshot.child(bt_addr).child("btaddr").getValue());
                     String temppasses = String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue());
+                    String templastpayed = String.valueOf(dataSnapshot.child(bt_addr).child("lastPayed").getValue());
 
                     String fill = "\n\r";
                     String title = " Account Info" + fill;
@@ -301,11 +329,12 @@ public class homeActivity extends AppCompatActivity {
                     String balance = " Balance: " + tempbalance + fill;
                     String address = " Address: " + tempaddress + fill;
                     String passes = " Number of passes: " + temppasses + fill;
+                    String payed = " latest timestamp: " + templastpayed + fill;
 
-                    String concatt = title + fname + email + balance + address + passes;
+                    String concatt = title + fname + email + balance + address + passes +payed;
 
                     mTextMessage.setText(concatt);
-                    Log.d(TAG, "onDataChange: " + concatt);
+                    //Log.d(TAG, "onDataChange: " + concatt);
 
                 }
             }

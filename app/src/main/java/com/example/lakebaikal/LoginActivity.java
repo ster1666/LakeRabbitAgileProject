@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
 
     public static boolean btaddrstate=true;
+    public static boolean enableBT=false;
 
     private FirebaseDatabase database;
     private DatabaseReference users;
@@ -167,6 +168,7 @@ public class LoginActivity extends AppCompatActivity {
                         if(btaddrstate){
                             Log.d(TAG, "btaddr: new");
                             users.child(bt_addr.toUpperCase()).setValue(new User(user.getUid(), user.getDisplayName(), user.getEmail(), bt_addr,0));
+                            Toast.makeText(context, "Account registered.", Toast.LENGTH_LONG).show();
                         }
                         else
                         {
@@ -186,6 +188,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
                                         users.child(oldbtaddr).removeValue();
+                                        Toast.makeText(context, "Account address updated.", Toast.LENGTH_LONG).show();
 
                                     }}
                                 @Override
@@ -198,16 +201,32 @@ public class LoginActivity extends AppCompatActivity {
                 });
         alertDialog.show();
     }
-    public static void btcheck(Context context,BluetoothAdapter btAdapter){
+    public static void btcheck(Context context, final BluetoothAdapter btAdapter){
         // Check for Bluetooth support and then check to make sure it is turned on
         if (btAdapter == null) {
             Toast.makeText(context, "Bluetooth is not available", Toast.LENGTH_LONG).show();
         }
         else {
+
             if (!btAdapter.isEnabled()) {
                 //ask user to turn on bluetooth
-                Intent enableBtIntent = new Intent( BluetoothAdapter.ACTION_REQUEST_ENABLE );
-                context.startActivity(enableBtIntent);
+                if(!enableBT)
+                {
+                    enableBT=true;
+                    Log.d(TAG, "btcheck: AGREED ON USING BLUETOOTH");
+                    Intent enableBtIntent = new Intent( BluetoothAdapter.ACTION_REQUEST_ENABLE );
+                    context.startActivity(enableBtIntent);
+                    
+                }
+                else
+                {
+                    //IF USER REFUSE TO AGREE ON BLUETOOTH
+                }
+
+            }
+            else
+            {
+                enableBT=true;
             }
         }
     }
