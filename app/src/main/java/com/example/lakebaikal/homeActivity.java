@@ -46,7 +46,6 @@ public class homeActivity extends AppCompatActivity {
     public BluetoothManager bm;
     public BluetoothAdapter btAdapter = null;
 
-
     private FirebaseDatabase database;
     private DatabaseReference users;
 
@@ -54,6 +53,7 @@ public class homeActivity extends AppCompatActivity {
     //Used t0 contain user id from the user that signed in
 
     private TextView mTextMessage;
+
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -69,7 +69,14 @@ public class homeActivity extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    //mTextMessage.setText(R.string.title_notifications);
+                    try{
+                        getaccountinfo();
+                    }catch(Exception e)
+                    {
+
+                    }
+
                     return true;
             }
             return false;
@@ -93,6 +100,8 @@ public class homeActivity extends AppCompatActivity {
         get_userBtaddr();
         discoverBT();
         checkTimestamp();
+
+
 
 
     }
@@ -164,9 +173,6 @@ public class homeActivity extends AppCompatActivity {
 
                         final Integer tfund = Integer.parseInt(input.getText().toString());
 
-
-
-
                         Log.d(TAG, "onClick: "+tfund);
                         users.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -201,23 +207,26 @@ public class homeActivity extends AppCompatActivity {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    while(!Thread.currentThread().isInterrupted())
+                    {
+                        //TODO INSERT GPS CHECK IF YOU WANT TO DECREASE DISCOVERY TIME
 
-                    //TODO INSERT GPS CHECK IF YOU WANT TO DECREASE DISCOVERY TIME
+                        Method method;
+                        try {
+                            method = btAdapter.getClass().getMethod("setScanMode", int.class, int.class);
+                            method.invoke(btAdapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 0);
+                            Log.d("LOG", "run:                                      DISCOVERABLE");
 
-                    Method method;
-                    try {
-                        method = btAdapter.getClass().getMethod("setScanMode", int.class, int.class);
-                        method.invoke(btAdapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 0);
-                        Log.d("LOG", "run:                                      DISCOVERABLE");
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            Thread.sleep(120000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    try {
-                        Thread.sleep(120);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
                 }
             }).start();
         }
@@ -231,46 +240,79 @@ public class homeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "run:                                        CHECKTIMESTAMP!");
-                users.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        {
-
-                            if(dataSnapshot.child(bt_addr).child("timestamp").getValue() != dataSnapshot.child(bt_addr).child("lastPayed").getValue())
+                while(!Thread.currentThread().isInterrupted())
+                {
+                    Log.d(TAG, "run:                                        CHECKTIMESTAMP!");
+                    users.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             {
-                                //TODO check if X time is between timestamp to pay
-                                DateFormat df = new SimpleDateFormat("dd/MM/yyyy,HH:mm");
-                                String date = df.format( Calendar.getInstance().getTime());
 
-                                users.child(bt_addr).child("lastPayed").setValue(date);
-                                int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
-                                tempbalance = tempbalance -100;// COST 100 WHEN PASSES
-                                users.child(bt_addr).child("balance").setValue(tempbalance);
+                                if(dataSnapshot.child(bt_addr).child("timestamp").getValue() != dataSnapshot.child(bt_addr).child("lastPayed").getValue())
+                                {
+                                    //TODO check if X time is between timestamp to pay
+                                    DateFormat df = new SimpleDateFormat("dd/MM/yyyy,HH:mm");
+                                    String date = df.format( Calendar.getInstance().getTime());
 
-                                int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
-                                temppasses = temppasses +1;
-                                users.child(bt_addr).child("passes").setValue(temppasses);
+                                    users.child(bt_addr).child("lastPayed").setValue(date);
+                                    int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
+                                    tempbalance = tempbalance -100;// COST 100 WHEN PASSES
+                                    users.child(bt_addr).child("balance").setValue(tempbalance);
 
-                            }
-                        }}
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
+                                    temppasses = temppasses +1;
+                                    users.child(bt_addr).child("passes").setValue(temppasses);
+                                    getaccountinfo();
 
+                                }
+                            }}
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    try {
+                        Thread.sleep(10000);//HOW OFTEN TO CHECK TIMESTAMP
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
 
-                try {
-                    Thread.sleep(100000);//HOW OFTEN TO CHECK TIMESTAMP
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         }).start();
     }
+    public void getaccountinfo() {
 
+        users.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                {
+                    String tempemail = String.valueOf(dataSnapshot.child(bt_addr).child("email").getValue());
+                    String tempbalance = String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue());
+                    String tempname = String.valueOf(dataSnapshot.child(bt_addr).child("fullname").getValue());
+                    String tempaddress = String.valueOf(dataSnapshot.child(bt_addr).child("btaddr").getValue());
+                    String temppasses = String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue());
 
+                    String fill = "\n\r";
+                    String title = " Account Info" + fill;
+                    String fname = " Name: " + tempname + fill;
+                    String email = " Email: " + tempemail + fill;
+                    String balance = " Balance: " + tempbalance + fill;
+                    String address = " Address: " + tempaddress + fill;
+                    String passes = " Number of passes: " + temppasses + fill;
 
+                    String concatt = title + fname + email + balance + address + passes;
 
+                    mTextMessage.setText(concatt);
+                    Log.d(TAG, "onDataChange: " + concatt);
 
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
 }
