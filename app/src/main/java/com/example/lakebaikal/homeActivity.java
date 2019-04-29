@@ -206,20 +206,27 @@ public class homeActivity extends AppCompatActivity {
                 public void run() {
                     while(!Thread.currentThread().isInterrupted())
                     {
-                        Log.d("LOG", "btcheck:");
+                        Log.d("LOG", "btcheck");
                         if(!btAdapter.isEnabled())
                         {
+                            btAdapter.cancelDiscovery();
                             Log.d("LOG", "run: BLUETOOTH AUTOMATICLY ACTIVATED!!!");
                             btAdapter.enable();
-                            try{
-                                discoverBT();
-                            }catch(Exception e)
+                            while(true)
                             {
+                                try {
+                                    Thread.sleep(3000);
+                                    discoverBT();
+                                    break;
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
 
+                                }
                             }
+
                         }
                         try {
-                            Thread.sleep(2500);
+                            Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -236,10 +243,7 @@ public class homeActivity extends AppCompatActivity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(!Thread.currentThread().isInterrupted())
-                {
                     //TODO INSERT GPS CHECK IF YOU WANT TO DECREASE DISCOVERY TIME
-
                     Method method;
                     try {
                         method = btAdapter.getClass().getMethod("setScanMode", int.class, int.class);
@@ -247,16 +251,10 @@ public class homeActivity extends AppCompatActivity {
                         Log.d("LOG", "run:                                      DISCOVERABLE");
 
                     } catch (Exception e) {
+                        Log.d(TAG, "run: DISCOVER BROKE");
                         e.printStackTrace();
                     }
-
-                    try {
-                        Thread.sleep(120000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
+                    
             }
         }).start();
 
