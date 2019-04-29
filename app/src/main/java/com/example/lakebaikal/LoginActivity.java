@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
@@ -32,6 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * A login screen that offers login via email/password.
@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    //TODO MAKE A CHANGE USER ALTERNATIVE
     public void createSignInIntent() {
         // [START auth_fui_create_intent]
         // Choose authentication providers
@@ -126,10 +127,10 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
             } else {
                 Log.d(TAG, "SIGN IN FAILED");
 
@@ -137,15 +138,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
     }
-    //TODO check if address regex is OK otherwise do again.... XX:XX:XX:XX:XX:XX
     public static InputFilter addressfilter = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            String blockCharacterSet = "~#&^|$%*!@/()-'\";,?{}=!$^';,?×+.÷<>{}€£¥₩%~`¤♡♥_|《》¡¿°•○●□■◇◆♧♣▲▼▶◀↑↓←→☆★▪-);-)--('(";
-            if (source != null && blockCharacterSet.contains(("" + source))) {
+            if (source != null && !Pattern.matches("[a-fA-F0-9:]+",""+source)) {
+                Log.d("LOG", "filter: ");
                 return "";
             }
             return null;
+
         }
     };
     public static void btAddrPopup(final Context context, final FirebaseUser user, final DatabaseReference users) {
@@ -154,48 +155,53 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.setMessage("Please register your bluetooth adress");
         final String oldbtaddr = bt_addr;
         final EditText input = new EditText(context);
-        //TODO check if address regex is OK otherwise do again.... XX:XX:XX:XX:XX:XX
-        input.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
         input.setFilters(new InputFilter[] { addressfilter });
         alertDialog.setView(input);
-
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-
-                        //TODO check if address regex is OK otherwise do again.... XX:XX:XX:XX:XX:XX
-                        bt_addr =String.valueOf(input.getText().toString().toUpperCase());
-                        if(btaddrstate){
-                            Log.d(TAG, "btaddr: new");
-                            users.child(bt_addr.toUpperCase()).setValue(new User(user.getUid(), user.getDisplayName(), user.getEmail(), bt_addr,0));
-                            Toast.makeText(context, "Account registered.", Toast.LENGTH_LONG).show();
+                        if(!Pattern.matches("..:..:..:..:..:..",input.getText()))
+                        {
+                            Toast.makeText(context, "Your input doesnt match a bluetooth address\n please try again...", Toast.LENGTH_LONG).show();
+                            btAddrPopup(context,user,users);
                         }
                         else
                         {
-                            Log.d(TAG, "btaddr: change " + oldbtaddr);
-                            users.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    {
-                                        users.child(bt_addr.toUpperCase()).setValue(new User(user.getUid(), user.getDisplayName(),
-                                                user.getEmail(), bt_addr,Integer.valueOf(String.valueOf(dataSnapshot.child(oldbtaddr).child("balance").getValue()))));
+                            bt_addr =String.valueOf(input.getText().toString().toUpperCase());
+                            if(btaddrstate){
+                                Log.d(TAG, "btaddr: new");
+                                users.child(bt_addr.toUpperCase()).setValue(new User(user.getUid(), user.getDisplayName(), user.getEmail(), bt_addr,0));
+                                Toast.makeText(context, "Account registered.", Toast.LENGTH_LONG).show();
+                            }
+                            else
+                            {
+                                Log.d(TAG, "btaddr: change " + oldbtaddr);
+                                users.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        {
+                                            users.child(bt_addr.toUpperCase()).setValue(new User(user.getUid(), user.getDisplayName(),
+                                                    user.getEmail(), bt_addr,Integer.valueOf(String.valueOf(dataSnapshot.child(oldbtaddr).child("balance").getValue()))));
 
-                                        String templastpayed = String.valueOf(dataSnapshot.child(oldbtaddr).child("lastPayed").getValue());
-                                        users.child(bt_addr).child("lastPayed").setValue(templastpayed);
+                                            String templastpayed = String.valueOf(dataSnapshot.child(oldbtaddr).child("lastPayed").getValue());
+                                            users.child(bt_addr).child("lastPayed").setValue(templastpayed);
 
-                                        int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(oldbtaddr).child("passes").getValue()));
-                                        users.child(bt_addr).child("passes").setValue(temppasses);
+                                            int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(oldbtaddr).child("passes").getValue()));
+                                            users.child(bt_addr).child("passes").setValue(temppasses);
 
 
-                                        users.child(oldbtaddr).removeValue();
-                                        Toast.makeText(context, "Account address updated.", Toast.LENGTH_LONG).show();
+                                            users.child(oldbtaddr).removeValue();
+                                            Toast.makeText(context, "Account address updated.", Toast.LENGTH_LONG).show();
 
-                                    }}
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                }
-                            });
+                                        }}
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
+                                });
+                            }
                         }
+
                         dialog.dismiss();
                     }
                 });
@@ -216,7 +222,7 @@ public class LoginActivity extends AppCompatActivity {
                     Log.d(TAG, "btcheck: AGREED ON USING BLUETOOTH");
                     Intent enableBtIntent = new Intent( BluetoothAdapter.ACTION_REQUEST_ENABLE );
                     context.startActivity(enableBtIntent);
-                    
+
                 }
                 else
                 {

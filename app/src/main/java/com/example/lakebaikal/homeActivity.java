@@ -1,11 +1,9 @@
 package com.example.lakebaikal;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -18,11 +16,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.ThemedSpinnerAdapter;
-import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,15 +24,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.lang.reflect.Method;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static com.example.lakebaikal.LoginActivity.bt_addr;
-import static com.example.lakebaikal.LoginActivity.btcheck;
 
 public class homeActivity extends AppCompatActivity {
 
@@ -78,6 +69,8 @@ public class homeActivity extends AppCompatActivity {
     };
 
     @Override
+    //TODO MAKE A LOGOUT BUTTON
+    //TODO MAKE HISTORY VIEW THAT SAVES EVENTS BETWEEN LOGIN?
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -140,9 +133,11 @@ public class homeActivity extends AppCompatActivity {
     public static InputFilter fundfilter = new InputFilter() {
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            String blockCharacterSet = "~#^|$%*!@/()-'\":;,?{}=!$^';,?×+.÷<>{}€£¥₩%~`¤♡♥_|《》¡¿°•○●□■◇◆♧♣▲▼▶◀↑↓←→☆★▪:-);-):-D:-(:'(:O abcdefghijklmnopqrstpxyzåäöABCDEFGHIJKLMNOPQRSTPXYZÅÄÖ";
+            String blockCharacterSet = "+-:;,.#*Nn/() ";
             if (source != null && blockCharacterSet.contains(("" + source))) {
+                Log.d("LOG", "filter: ");
                 return "";
+
             }
             return null;
         }
@@ -153,6 +148,11 @@ public class homeActivity extends AppCompatActivity {
         LoginActivity.btAddrPopup(this,user,users);
     }
     public void add_funds_click(View view)
+    {
+        addfundPopup();
+    }
+
+    public void addfundPopup()
     {
         AlertDialog alertDialog = new AlertDialog.Builder(this).create();
         alertDialog.setTitle("Account balance");
@@ -321,7 +321,7 @@ public class homeActivity extends AppCompatActivity {
                     String templastpayed = String.valueOf(dataSnapshot.child(bt_addr).child("lastPayed").getValue());
 
                     String fill = "\n\r";
-                    String title = " Account Info" + fill;
+                    String title = " Account Information" + fill;
                     String fname = " Name: " + tempname + fill;
                     String email = " Email: " + tempemail + fill;
                     String balance = " Balance: " + tempbalance + fill;
