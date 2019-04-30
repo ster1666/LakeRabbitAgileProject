@@ -102,19 +102,21 @@ public class LoginActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                Log.d(TAG, "onActivityResult: USER "+user.getDisplayName());
                 users.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         if(response.isNewUser())
                         {
-                            Log.d(TAG, "onActivityResult: NEW");
+                            Log.d(TAG, "onActivityResult:                                       NEW");
                             btAddrPopup(LoginActivity.this,user,users);
 
                         }
                         else
                         {
-                            Log.d(TAG, "onActivityResult: OLD " + user.getUid());
+                            Log.d(TAG, "onActivityResult:                                       OLD " + user.getUid());
                             Intent homeActivity = new Intent(LoginActivity.this, com.example.lakebaikal.homeActivity.class);
 
                             bt_addr = users.getKey();

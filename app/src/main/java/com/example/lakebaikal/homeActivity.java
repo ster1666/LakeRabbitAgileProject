@@ -88,11 +88,8 @@ public class homeActivity extends AppCompatActivity {
 
         get_userBtaddr();
         discoverBT();
-        checkTimestamp();
         autoenableBT();
-
-
-
+        checkTimestamp();
 
 
     }
@@ -228,10 +225,11 @@ public class homeActivity extends AppCompatActivity {
 
                         }
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(3000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        getaccountinfo();
                     }
                 }
             }).start();
@@ -254,7 +252,6 @@ public class homeActivity extends AppCompatActivity {
 
                 } catch (Exception e) {
                     Log.d(TAG, "run: DISCOVER BROKE");
-                    e.printStackTrace();
                 }
 
             }
@@ -319,12 +316,10 @@ public class homeActivity extends AppCompatActivity {
                                         temppasses = temppasses +1;
                                         users.child(bt_addr).child("passes").setValue(temppasses);
 
-
-
                                     }
 
                                 }
-                                getaccountinfo();
+
 
                             }}
                         @Override
