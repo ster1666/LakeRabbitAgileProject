@@ -226,7 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    //IF USER REFUSE TO AGREE ON BLUETOOTH
+                    //TODO IF USER REFUSE TO AGREE ON BLUETOOTH
                 }
 
             }

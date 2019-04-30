@@ -228,7 +228,7 @@ public class homeActivity extends AppCompatActivity {
 
                         }
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(5000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -274,10 +274,12 @@ public class homeActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             {
                                 //NOT TESTED
+                                //TODO TEST WITH TIMESTAMP FROM PIE
                                 //DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
                                 DateFormat df = new SimpleDateFormat("HH:mm");
                                 long elapsed= 0;
                                 String time =(String)dataSnapshot.child(bt_addr).child("timestamp").getValue();
+                                Log.d( TAG, "onDataChange: TIMESTAMP "+time );
                                 if(time !=null)
                                 {
                                     String lasttime =(String)dataSnapshot.child(bt_addr).child("lastPayed").getValue();
@@ -286,13 +288,13 @@ public class homeActivity extends AppCompatActivity {
                                     try {
                                         d1 = df.parse(time);
                                     } catch (ParseException e) {
-                                        e.printStackTrace();
+
                                     }
                                     Date d2 = null;
                                     try {
                                         d2 = df.parse(lasttime);
                                     } catch (ParseException e) {
-                                        e.printStackTrace();
+
                                     }
                                     try
                                     {
