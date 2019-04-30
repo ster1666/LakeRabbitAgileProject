@@ -273,54 +273,49 @@ public class homeActivity extends AppCompatActivity {
                             {
                                 //NOT TESTED
                                 //TODO TEST WITH TIMESTAMP FROM PIE
-                                //DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
-                                DateFormat df = new SimpleDateFormat("HH:mm");
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                //DateFormat df = new SimpleDateFormat("HH:mm");
                                 long elapsed= 0;
-                                String time =(String)dataSnapshot.child(bt_addr).child("timestamp").getValue();
-                                Log.d( TAG, "onDataChange: TIMESTAMP "+time );
-                                if(time !=null)
-                                {
-                                    String lasttime =(String)dataSnapshot.child(bt_addr).child("lastPayed").getValue();
+                                Date dstamp=null,dpayed=null;
+                                String timestamp = (String)dataSnapshot.child(bt_addr).child("timestamp").getValue();
+                                Log.d( TAG, "onDataChange: TIMESTAMP "+timestamp );
 
-                                    Date d1 = null;
-                                    try {
-                                        d1 = df.parse(time);
-                                    } catch (ParseException e) {
+                                String lasttime =(String)dataSnapshot.child(bt_addr).child("lastPayed").getValue();
+                                Log.d( TAG, "onDataChange: LASTPAYED "+lasttime );
 
-                                    }
-                                    Date d2 = null;
-                                    try {
-                                        d2 = df.parse(lasttime);
-                                    } catch (ParseException e) {
-
-                                    }
-                                    try
-                                    {
-                                        elapsed = d2.getTime() - d1.getTime();
-                                    }catch(Exception e)
-                                    {
-
-                                    }
-
-                                    Log.d( TAG, "onDataChange: "+elapsed );
-                                    if(elapsed >= 12)
-                                    {
-//                                    DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
-//                                    String date = df.format( Calendar.getInstance().getTime());
-
-                                        users.child(bt_addr).child("lastPayed").setValue(time);
-                                        int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
-                                        tempbalance = tempbalance -100;// COST 100 WHEN PASSES
-                                        users.child(bt_addr).child("balance").setValue(tempbalance);
-
-                                        int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
-                                        temppasses = temppasses +1;
-                                        users.child(bt_addr).child("passes").setValue(temppasses);
-
-                                    }
+                                try {
+                                    dstamp = df.parse(timestamp);
+                                    dpayed = df.parse(lasttime);
+                                } catch (ParseException e) {
 
                                 }
 
+                                Log.d(TAG, "onDataChange: DATE TIMESTAMP: "+dstamp + " DATE LASTPAYED: "+dpayed);
+
+                                try
+                                {
+                                    elapsed = dpayed.getTime() - dstamp.getTime();
+                                }catch(Exception e)
+                                {
+
+                                }
+                                elapsed = Math.abs(elapsed);
+                                Log.d( TAG, "onDataChange: ELAPSED: "+elapsed );
+                                if(elapsed >= 10000|| dpayed == null)
+                                {
+//                                    DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
+//                                    String date = df.format( Calendar.getInstance().getTime());
+
+                                    users.child(bt_addr).child("lastPayed").setValue(timestamp);
+                                    int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
+                                    tempbalance = tempbalance -100;// COST 100 WHEN PASSES
+                                    users.child(bt_addr).child("balance").setValue(tempbalance);
+
+                                    int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
+                                    temppasses = temppasses +1;
+                                    users.child(bt_addr).child("passes").setValue(temppasses);
+
+                                }
 
                             }}
                         @Override
