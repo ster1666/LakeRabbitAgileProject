@@ -343,7 +343,7 @@ public class homeActivity extends AppCompatActivity {
                     //TODO CHANGE TO MATCH GUI LATER
                     String tempemail = String.valueOf(dataSnapshot.child(bt_addr).child("email").getValue());
                     String tempbalance = String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue());
-                    String tempname = String.valueOf(dataSnapshot.child(bt_addr).child("fullname").getValue());
+                    String tempname = String.valueOf(dataSnapshot.child(bt_addr).child("fullName").getValue());
                     String tempaddress = String.valueOf(dataSnapshot.child(bt_addr).child("btaddr").getValue());
                     String temppasses = String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue());
                     String templastpayed = String.valueOf(dataSnapshot.child(bt_addr).child("lastPayed").getValue());

@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Successfully signed in
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                Log.d(TAG, "onActivityResult: USER "+user.getDisplayName());
+                Log.d(TAG, "##########################onActivityResult: USER "+user.getDisplayName());
                 users.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
