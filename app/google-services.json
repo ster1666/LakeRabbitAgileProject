@@ -47,6 +47,22 @@
           }
         },
         {
+          "client_id": "1086615060978-sbtl1817phei4gp1qjbfeunq5pog49j3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakebaikal",
+            "certificate_hash": "01226eb718513f7af26e7c88b6ac6d43ed99ed5d"
+          }
+        },
+        {
+          "client_id": "1086615060978-g4bmi449g2nasbfgt9qtlrigqm2vhmj2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakebaikal",
+            "certificate_hash": "96187e18abb256cc11f89ba4079b05f40653e3ba"
+          }
+        },
+        {
           "client_id": "1086615060978-d5ljndlopaud87sd0bjq4fjdhjgkm6vr.apps.googleusercontent.com",
           "client_type": 3
         }

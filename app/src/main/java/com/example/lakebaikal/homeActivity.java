@@ -59,9 +59,6 @@ public class homeActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     //mTextMessage.setText(R.string.title_home);
                     return true;
-                case R.id.navigation_dashboard:
-                    //mTextMessage.setText(R.string.title_dashboard);
-                    return true;
                 case R.id.navigation_notifications:
                     //mTextMessage.setText(R.string.title_notifications);
 
@@ -88,6 +85,7 @@ public class homeActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         get_userBtaddr();
+        getaccountinfo();
         discoverBT();
         autoenableBT();
         checkTimestamp();
