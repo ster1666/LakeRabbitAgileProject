@@ -282,40 +282,44 @@ public class homeActivity extends AppCompatActivity {
 
                                 String lasttime =(String)dataSnapshot.child(bt_addr).child("lastPayed").getValue();
                                 Log.d( TAG, "onDataChange: LASTPAYED "+lasttime );
-
-                                try {
-                                    dstamp = df.parse(timestamp);
-                                    dpayed = df.parse(lasttime);
-                                } catch (ParseException e) {
-
-                                }
-
-                                Log.d(TAG, "onDataChange: DATE TIMESTAMP: "+dstamp + " DATE LASTPAYED: "+dpayed);
-
-                                try
+                                
+                                if(timestamp.length() >= 2)
                                 {
-                                    elapsed = dpayed.getTime() - dstamp.getTime();
-                                }catch(Exception e)
-                                {
+                                    try {
+                                        dstamp = df.parse(timestamp);
+                                        dpayed = df.parse(lasttime);
+                                    } catch (ParseException e) {
 
-                                }
-                                elapsed = Math.abs(elapsed);
-                                Log.d( TAG, "onDataChange: ELAPSED: "+elapsed );
-                                if(elapsed >= 10000|| dpayed == null)
-                                {
+                                    }
+
+                                    Log.d(TAG, "onDataChange: DATE TIMESTAMP: "+dstamp + " DATE LASTPAYED: "+dpayed);
+
+                                    try
+                                    {
+                                        elapsed = dpayed.getTime() - dstamp.getTime();
+                                    }catch(Exception e)
+                                    {
+
+                                    }
+                                    elapsed = Math.abs(elapsed);
+                                    Log.d( TAG, "onDataChange: ELAPSED: "+elapsed );
+                                    if(elapsed >= 10000|| dpayed == null)
+                                    {
 //                                    DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
 //                                    String date = df.format( Calendar.getInstance().getTime());
 
-                                    users.child(bt_addr).child("lastPayed").setValue(timestamp);
-                                    int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
-                                    tempbalance = tempbalance -100;// COST 100 WHEN PASSES
-                                    users.child(bt_addr).child("balance").setValue(tempbalance);
+                                        users.child(bt_addr).child("lastPayed").setValue(timestamp);
+                                        int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
+                                        tempbalance = tempbalance -100;// COST 100 WHEN PASSES
+                                        users.child(bt_addr).child("balance").setValue(tempbalance);
 
-                                    int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
-                                    temppasses = temppasses +1;
-                                    users.child(bt_addr).child("passes").setValue(temppasses);
+                                        int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
+                                        temppasses = temppasses +1;
+                                        users.child(bt_addr).child("passes").setValue(temppasses);
 
+                                    }
                                 }
+
 
                             }}
                         @Override
