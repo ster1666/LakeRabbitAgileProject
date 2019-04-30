@@ -269,44 +269,42 @@ public class homeActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             {
-                                //NOT TESTED
-                                //TODO TEST WITH TIMESTAMP FROM PIE
-                                //DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
-                                DateFormat df = new SimpleDateFormat("HH:mm");
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                                //DateFormat df = new SimpleDateFormat("HH:mm");
                                 long elapsed= 0;
-                                String time =(String)dataSnapshot.child(bt_addr).child("timestamp").getValue();
-                                Log.d( TAG, "onDataChange: TIMESTAMP "+time );
-                                if(time !=null)
+                                Date dstamp=null,dpayed=null;
+                                String timestamp = (String)dataSnapshot.child(bt_addr).child("timestamp").getValue();
+                                Log.d( TAG, "onDataChange: TIMESTAMP "+timestamp );
+
+                                String lasttime =(String)dataSnapshot.child(bt_addr).child("lastPayed").getValue();
+                                Log.d( TAG, "onDataChange: LASTPAYED "+lasttime );
+
+                                if(timestamp.length() >= 2)
                                 {
-                                    String lasttime =(String)dataSnapshot.child(bt_addr).child("lastPayed").getValue();
-
-                                    Date d1 = null;
                                     try {
-                                        d1 = df.parse(time);
+                                        dstamp = df.parse(timestamp);
+                                        dpayed = df.parse(lasttime);
                                     } catch (ParseException e) {
 
                                     }
-                                    Date d2 = null;
-                                    try {
-                                        d2 = df.parse(lasttime);
-                                    } catch (ParseException e) {
 
-                                    }
+                                    Log.d(TAG, "onDataChange: DATE TIMESTAMP: "+dstamp + " DATE LASTPAYED: "+dpayed);
+
                                     try
                                     {
-                                        elapsed = d2.getTime() - d1.getTime();
+                                        elapsed = dpayed.getTime() - dstamp.getTime();
                                     }catch(Exception e)
                                     {
 
                                     }
-
-                                    Log.d( TAG, "onDataChange: "+elapsed );
-                                    if(elapsed >= 12)
+                                    elapsed = Math.abs(elapsed);
+                                    Log.d( TAG, "onDataChange: ELAPSED: "+elapsed );
+                                    if(elapsed >= 10000|| dpayed == null)
                                     {
 //                                    DateFormat df = new SimpleDateFormat("yyyy-dd-MM HH:mm");
 //                                    String date = df.format( Calendar.getInstance().getTime());
 
-                                        users.child(bt_addr).child("lastPayed").setValue(time);
+                                        users.child(bt_addr).child("lastPayed").setValue(timestamp);
                                         int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
                                         tempbalance = tempbalance -100;// COST 100 WHEN PASSES
                                         users.child(bt_addr).child("balance").setValue(tempbalance);
@@ -316,7 +314,6 @@ public class homeActivity extends AppCompatActivity {
                                         users.child(bt_addr).child("passes").setValue(temppasses);
 
                                     }
-
                                 }
 
 
@@ -343,6 +340,7 @@ public class homeActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 {
+                    //TODO CHANGE TO MATCH GUI LATER
                     String tempemail = String.valueOf(dataSnapshot.child(bt_addr).child("email").getValue());
                     String tempbalance = String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue());
                     String tempname = String.valueOf(dataSnapshot.child(bt_addr).child("fullname").getValue());
