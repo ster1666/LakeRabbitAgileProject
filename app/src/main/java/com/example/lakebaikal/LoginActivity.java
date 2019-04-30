@@ -151,6 +151,7 @@ public class LoginActivity extends AppCompatActivity {
 
         }
     };
+    //TODO USER GETDISPLAYNAME DOESNT WORK 
     public static void btAddrPopup(final Context context, final FirebaseUser user, final DatabaseReference users) {
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle("Bluetooth");

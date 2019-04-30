@@ -271,8 +271,6 @@ public class homeActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             {
-                                //NOT TESTED
-                                //TODO TEST WITH TIMESTAMP FROM PIE
                                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
                                 //DateFormat df = new SimpleDateFormat("HH:mm");
                                 long elapsed= 0;
@@ -282,7 +280,7 @@ public class homeActivity extends AppCompatActivity {
 
                                 String lasttime =(String)dataSnapshot.child(bt_addr).child("lastPayed").getValue();
                                 Log.d( TAG, "onDataChange: LASTPAYED "+lasttime );
-                                
+
                                 if(timestamp.length() >= 2)
                                 {
                                     try {
@@ -344,6 +342,7 @@ public class homeActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 {
+                    //TODO CHANGE TO MATCH GUI LATER
                     String tempemail = String.valueOf(dataSnapshot.child(bt_addr).child("email").getValue());
                     String tempbalance = String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue());
                     String tempname = String.valueOf(dataSnapshot.child(bt_addr).child("fullname").getValue());
