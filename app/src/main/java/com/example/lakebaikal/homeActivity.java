@@ -52,7 +52,6 @@ public class homeActivity extends AppCompatActivity {
 
     @Override
     //TODO MAKE A LOGOUT BUTTON
-    //TODO MAKE HISTORY VIEW THAT SAVES EVENTS BETWEEN LOGIN?
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -63,9 +62,13 @@ public class homeActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
 
-        get_userBtaddr();
+        if(!get_userBtaddr(users,user))
+        {
+            Log.d(TAG, "onCreate: NO ADDRESS FOUND");
+            LoginActivity.btAddrPopup(this,user,users,false);
+        }
         discoverBT();
-        autoenableBT();
+        autoenableBT(btAdapter);
         checkTimestamp();
 
         //Navigation
@@ -102,19 +105,20 @@ public class homeActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        autoenableBT();
+        autoenableBT(btAdapter);
         discoverBT();;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        autoenableBT();
+        autoenableBT(btAdapter);
         discoverBT();
     }
 
-    public void get_userBtaddr()
+    public boolean get_userBtaddr(DatabaseReference users,final FirebaseUser user)
     {
+        final boolean[] state = {false};
         users.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -127,6 +131,7 @@ public class homeActivity extends AppCompatActivity {
                                 LoginActivity.bt_addr = post.child("btaddr").getValue().toString();
                                 Log.d(TAG, "onDataChange: FOUND BTADDR "+LoginActivity.bt_addr);
                                 //TODO HANDLE IF YOUR ACCOUNT CANT BE FOUND IN FB
+                                state[0] =true;
                             }
                         }catch(Exception e)
                         {
@@ -139,12 +144,14 @@ public class homeActivity extends AppCompatActivity {
 
             }
         });
+        Log.d(TAG, "get_userBtaddr: STATTTATATATT "+ state[0][0]);
+        return state[0][0];
     }
 
 
 
 
-    public void autoenableBT()
+    public void autoenableBT(final BluetoothAdapter btAdapter)
     {
         if(LoginActivity.enableBT)
         {
@@ -157,21 +164,15 @@ public class homeActivity extends AppCompatActivity {
                         Log.d("LOG", "btcheck");
                         if(!btAdapter.isEnabled())
                         {
-                            btAdapter.cancelDiscovery();
-                            Log.d("LOG", "run: BLUETOOTH AUTOMATICLY ACTIVATED!!!");
-                            btAdapter.enable();
-                            while(true)
-                            {
-                                try {
-                                    Thread.sleep(3000);
-                                    discoverBT();
-                                    break;
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                           LoginActivity.BTactive(btAdapter);
 
-                                }
+                            try {
+                                Thread.sleep(3000);
+                                discoverBT();
+                                break;
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
                             }
-
                         }
                         try {
                             Thread.sleep(3000);
@@ -197,6 +198,7 @@ public class homeActivity extends AppCompatActivity {
                     method = btAdapter.getClass().getMethod("setScanMode", int.class, int.class);
                     method.invoke(btAdapter, BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE, 0);
                     Log.d("LOG", "run:                                      DISCOVERABLE");
+
 
                 } catch (Exception e) {
                     Log.d(TAG, "run: DISCOVER BROKE");

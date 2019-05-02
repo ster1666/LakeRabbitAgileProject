@@ -1,6 +1,7 @@
 package com.example.lakebaikal;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,6 +28,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.regex.Pattern;
 
 import static com.example.lakebaikal.LoginActivity.bt_addr;
 
@@ -73,14 +77,14 @@ public class AccountFragment extends Fragment {
         mAddFundsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addfundPopup();
+                addfundPopup(getContext());
             }
         });
 
         mRegisterBtBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginActivity.btAddrPopup(getContext(),user,users);
+                LoginActivity.btAddrPopup(getContext(),user,users,false);
             }
         });
 
@@ -89,10 +93,20 @@ public class AccountFragment extends Fragment {
         // Inflate the layout for this fragment
         return fragment;
     }
-
-    public void addfundPopup()
+    public static boolean number_regex(EditText input, Context context){
+        if(!Pattern.matches("[0-9]+",input.getText()))
+        {
+            Toast.makeText(context, "Your input must be a number", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    public void addfundPopup(final Context context)
     {
-        AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle("Account balance");
         alertDialog.setMessage("add balance to your account");
 
@@ -105,24 +119,29 @@ public class AccountFragment extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int which) {
 
+                        if(!number_regex(input,context))
+                        {
+                            addfundPopup(context);
+                        }
+                        else
+                        {
+                            final Integer tfund = Integer.parseInt(input.getText().toString());
 
-                        final Integer tfund = Integer.parseInt(input.getText().toString());
-
-                        Log.d(TAG, "onClick: "+tfund);
-                        users.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                {
-                                    int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
-                                    tempbalance = tempbalance + tfund;// COST 100 WHEN PASSES
-                                    users.child(bt_addr).child("balance").setValue(tempbalance);
-                                    dialog.dismiss();
-                                }}
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                            }
-                        });
-
+                            Log.d(TAG, "onClick: "+tfund);
+                            users.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    {
+                                        int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
+                                        tempbalance = tempbalance + tfund;// COST 100 WHEN PASSES
+                                        users.child(bt_addr).child("balance").setValue(tempbalance);
+                                        dialog.dismiss();
+                                    }}
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
+                        }
                     }
                 });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
