@@ -14,23 +14,22 @@
         <!-- Login progress -->
 
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="WELCOME TO RABBIT TOLL"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="30dp" />
+
+
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
         android:src="@drawable/toll_picture" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="20dp"
-        android:textColor="@color/colorPrimaryDark"
-        android:text="WELCOME TO RABBIT TOLL"
-        />
-          
 
     <ScrollView
         android:id="@+id/login_form"
