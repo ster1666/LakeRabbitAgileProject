@@ -26,4 +26,6 @@
     <string name="registerbt_btn">Register Address</string>
     <string name="addfunds_btn">Add Funds</string>
     <string name="account_info">Account Information</string>
+    <string name="payment_date">Payment Date</string>
+    <string name="payment_cost">Price</string>
 </resources>
