@@ -210,6 +210,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
         alertDialog.show();
     }
+
     public static void btcheck(Context context, final BluetoothAdapter btAdapter){
         // Check for Bluetooth support and then check to make sure it is turned on
         if (btAdapter == null) {
