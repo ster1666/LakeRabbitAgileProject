@@ -6,19 +6,16 @@ import static org.junit.Assert.*;
 
 public class LoginActivityTest {
 
+
     @Test
-    public void createSignInIntent() {
+    public void btaddress_regex() {
     }
 
     @Test
-    public void onActivityResult() {
+    public void btexist() {
     }
 
     @Test
-    public void btAddrPopup() {
-    }
-
-    @Test
-    public void btcheck() {
+    public void BTactive() {
     }
 }

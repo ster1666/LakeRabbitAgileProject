@@ -43,9 +43,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "LoginActivity";
 
-    public static boolean btaddrstate=true;
-    public static boolean enableBT=false;
-
     private FirebaseDatabase database;
     private DatabaseReference users;
 
