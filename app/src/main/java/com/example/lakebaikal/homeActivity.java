@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
@@ -44,29 +46,9 @@ public class homeActivity extends AppCompatActivity {
     private DatabaseReference users;
 
     private static FirebaseUser user;
-    //Used t0 contain user id from the user that signed in
 
-    private TextView mTextMessage;
+    private BottomNavigationView bottomNavigationView;
 
-
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    //mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_notifications:
-                    //mTextMessage.setText(R.string.title_notifications);
-
-                    return true;
-            }
-            return false;
-        }
-    };
 
     @Override
     //TODO MAKE A LOGOUT BUTTON
@@ -80,17 +62,41 @@ public class homeActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
-        mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         get_userBtaddr();
-        getaccountinfo();
         discoverBT();
         autoenableBT();
         checkTimestamp();
 
+        //Navigation
+        bottomNavigationView = findViewById(R.id.navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+                Fragment selectedFragment = null;
+
+                switch (item.getItemId()){
+                    case R.id.navigation_home:
+                        selectedFragment = AccountFragment.newInstance();
+                        break;
+                    case R.id.navigation_notifications:
+                        selectedFragment = PaymentHistoryFragment.newInstance();
+                        break;
+                }
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, selectedFragment);
+                transaction.commit();
+                return true;
+            }
+        });
+        setDefaultFragment();
+    }
+
+    private void setDefaultFragment(){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, AccountFragment.newInstance());
+        transaction.commit();
     }
 
     @Override
@@ -98,6 +104,13 @@ public class homeActivity extends AppCompatActivity {
         super.onRestart();
         autoenableBT();
         discoverBT();;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        autoenableBT();
+        discoverBT();
     }
 
     public void get_userBtaddr()
@@ -128,72 +141,9 @@ public class homeActivity extends AppCompatActivity {
         });
     }
 
-    public static InputFilter fundfilter = new InputFilter() {
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            String blockCharacterSet = "+-:;,.#*Nn/() ";
-            if (source != null && blockCharacterSet.contains(("" + source))) {
-                Log.d("LOG", "filter: ");
-                return "";
-
-            }
-            return null;
-        }
-    };
-
-    public void register_btaddr_click(View view)
-    {
-        LoginActivity.btAddrPopup(this,user,users);
-    }
-    public void add_funds_click(View view)
-    {
-        addfundPopup();
-    }
-
-    public void addfundPopup()
-    {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Account balance");
-        alertDialog.setMessage("add balance to your account");
-
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_PHONE);
-        input.setFilters(new InputFilter[] { fundfilter });
-        alertDialog.setView(input);
-
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, int which) {
 
 
-                        final Integer tfund = Integer.parseInt(input.getText().toString());
 
-                        Log.d(TAG, "onClick: "+tfund);
-                        users.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                {
-                                    int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
-                                    tempbalance = tempbalance + tfund;// COST 100 WHEN PASSES
-                                    users.child(bt_addr).child("balance").setValue(tempbalance);
-                                    dialog.dismiss();
-                                }}
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                            }
-                        });
-
-                    }
-                });
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
-    }
     public void autoenableBT()
     {
         if(LoginActivity.enableBT)
@@ -228,7 +178,6 @@ public class homeActivity extends AppCompatActivity {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        getaccountinfo();
                     }
                 }
             }).start();
@@ -333,41 +282,6 @@ public class homeActivity extends AppCompatActivity {
             }
         }).start();
     }
-    //temp function to get account information
-    public void getaccountinfo() {
 
-        users.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                {
-                    //TODO CHANGE TO MATCH GUI LATER
-                    String tempemail = String.valueOf(dataSnapshot.child(bt_addr).child("email").getValue());
-                    String tempbalance = String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue());
-                    String tempname = String.valueOf(dataSnapshot.child(bt_addr).child("fullName").getValue());
-                    String tempaddress = String.valueOf(dataSnapshot.child(bt_addr).child("btaddr").getValue());
-                    String temppasses = String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue());
-                    String templastpayed = String.valueOf(dataSnapshot.child(bt_addr).child("lastPayed").getValue());
 
-                    String fill = "\n\r";
-                    String title = " Account Information" + fill;
-                    String fname = " Name: " + tempname + fill;
-                    String email = " Email: " + tempemail + fill;
-                    String balance = " Balance: " + tempbalance + fill;
-                    String address = " Address: " + tempaddress + fill;
-                    String passes = " Number of passes: " + temppasses + fill;
-                    String payed = " latest timestamp: " + templastpayed + fill;
-
-                    String concatt = title + fname + email + balance + address + passes +payed;
-
-                    mTextMessage.setText(concatt);
-                    //Log.d(TAG, "onDataChange: " + concatt);
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
 }
