@@ -28,4 +28,7 @@
     <string name="account_info">Account Information</string>
     <string name="payment_date">Payment Date</string>
     <string name="payment_cost">Price</string>
+    <string name="date_and_price">Date and Price</string>
+    <string name="title_payment_history">Payment History</string>
+    <string name="title_account">Account</string>
 </resources>

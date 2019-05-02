@@ -43,11 +43,12 @@ public class homeActivity extends AppCompatActivity {
     public static BluetoothAdapter btAdapter = null;
 
     private FirebaseDatabase database;
-    private DatabaseReference users;
+    private DatabaseReference users, paymentHistory;
 
     private static FirebaseUser user;
 
     private BottomNavigationView bottomNavigationView;
+    private int tollCost = 100;
 
 
     @Override
@@ -62,6 +63,7 @@ public class homeActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
+        paymentHistory = database.getReference("PaymentHistory");
 
         get_userBtaddr();
         discoverBT();
@@ -178,6 +180,7 @@ public class homeActivity extends AppCompatActivity {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+
                     }
                 }
             }).start();
@@ -222,7 +225,7 @@ public class homeActivity extends AppCompatActivity {
                                 //DateFormat df = new SimpleDateFormat("HH:mm");
                                 long elapsed= 0;
                                 Date dstamp=null,dpayed=null;
-                                String timestamp = (String)dataSnapshot.child(bt_addr).child("timestamp").getValue();
+                                final String timestamp = (String)dataSnapshot.child(bt_addr).child("timestamp").getValue();
                                 Log.d( TAG, "onDataChange: TIMESTAMP "+timestamp );
 
                                 String lasttime =(String)dataSnapshot.child(bt_addr).child("lastPayed").getValue();
@@ -255,12 +258,15 @@ public class homeActivity extends AppCompatActivity {
 
                                         users.child(bt_addr).child("lastPayed").setValue(timestamp);
                                         int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
-                                        tempbalance = tempbalance -100;// COST 100 WHEN PASSES
+                                        tempbalance = tempbalance - tollCost;// COST 100 WHEN PASSES
                                         users.child(bt_addr).child("balance").setValue(tempbalance);
 
                                         int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
                                         temppasses = temppasses +1;
                                         users.child(bt_addr).child("passes").setValue(temppasses);
+
+                                        //Upload to payment history after passing a toll
+                                        updatePaymentHistory(timestamp);
 
                                     }
                                 }
@@ -283,5 +289,9 @@ public class homeActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void updatePaymentHistory(String timeStamp){
+        paymentHistory.child(bt_addr).push()
+                .setValue(new PaymentHistory(timeStamp, tollCost));
+    }
 
 }
