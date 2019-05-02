@@ -24,20 +24,26 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/profileImage"
             android:layout_centerInParent="true"
-            android:text="@string/account_info" />
+            android:textSize="30dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textStyle="bold"
+            android:text="@string/account_info"
+            />
 
         <Button
             android:id="@+id/addfunds_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/addfunds_btn"
-            android:layout_below="@id/account_info"/>
+            android:layout_below="@id/account_info"
+            android:layout_marginTop="310dp"
+            android:text="@string/addfunds_btn" />
 
         <Button
             android:id="@+id/registerbt_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/registerbt_btn"
-            android:layout_below="@id/addfunds_btn"/>
+            android:layout_below="@id/addfunds_btn"
+            android:layout_marginTop="-3dp"
+            android:text="@string/registerbt_btn" />
     </RelativeLayout>
 </FrameLayout>
