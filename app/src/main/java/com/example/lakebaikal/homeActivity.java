@@ -157,7 +157,6 @@ public class homeActivity extends AppCompatActivity {
 
     public void autoenableBT(final BluetoothAdapter btAdapter)
     {
-        Log.d("LOG", "btcheck: ");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -168,19 +167,18 @@ public class homeActivity extends AppCompatActivity {
                     {
                         LoginActivity.BTactive(btAdapter);
 
-                        try {
-                            Thread.sleep(3000);
-                            if(discoverBT(btAdapter)== 23)
-                            {
-                                Log.d( TAG, "run: discovering" );
-                            }
-                            break;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+
+                    }
+                    if(discoverBT(btAdapter)== 23)
+                    {
+                        Log.d( TAG, "run: discovering" );
+                    }
+                    else
+                    {
+                        discoverBT( btAdapter );
                     }
                     try {
-                        Thread.sleep(3000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

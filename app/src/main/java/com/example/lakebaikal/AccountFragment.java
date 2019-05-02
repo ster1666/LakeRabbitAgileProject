@@ -93,10 +93,15 @@ public class AccountFragment extends Fragment {
         // Inflate the layout for this fragment
         return fragment;
     }
-    public static boolean number_regex(EditText input, Context context){
-        if(!Pattern.matches("[0-9]+",input.getText()))
+    public static boolean number_regex(String input, Context context){
+        if(!Pattern.matches("[0-9]+",input))
         {
-            Toast.makeText(context, "Your input must be a number", Toast.LENGTH_LONG).show();
+            try{
+                Toast.makeText(context, "Your input must be a number", Toast.LENGTH_LONG).show();
+            }catch(Exception e)
+            {
+
+            }
             return false;
         }
         else
@@ -119,7 +124,7 @@ public class AccountFragment extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int which) {
 
-                        if(!number_regex(input,context))
+                        if(!number_regex( String.valueOf( input ),context))
                         {
                             addfundPopup(context);
                         }

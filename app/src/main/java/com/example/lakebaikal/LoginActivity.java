@@ -149,15 +149,22 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
-    public static boolean btaddress_regex(EditText input,Context context){
-        if(!Pattern.matches("..:..:..:..:..:..",input.getText()))
+    public static boolean btaddress_regex(String input,Context context){
+        if(!Pattern.matches("..:..:..:..:..:..",input))
         {
-            Toast.makeText(context, "Your input doesnt match a bluetooth address\n please try again...\n address example: XX:XX:XX:XX:XX:XX\n your see your bluetooth address in mobile settings", Toast.LENGTH_LONG).show();
-            return false;
+            try{
+                Toast.makeText(context, "Your input doesnt match a bluetooth address\n please try again...\n address example: XX:XX:XX:XX:XX:XX" +
+                        "\n your see your bluetooth address in mobile settings", Toast.LENGTH_LONG).show();
+            }catch(Exception e)
+            {
+
+            }
+
+            return true;
         }
         else
         {
-            return true;
+            return false;
         }
     }
     //TODO USER GETDISPLAYNAME DOESNT WORK 
@@ -173,7 +180,7 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if(btaddress_regex(input,context))
+                        if(btaddress_regex( String.valueOf( input.getText() ),context))
                         {
                             btAddrPopup(context,user,users,state);
                         }
@@ -251,12 +258,12 @@ public class LoginActivity extends AppCompatActivity {
             //Intent enableBtIntent = new Intent( BluetoothAdapter.ACTION_REQUEST_ENABLE );
             //context.startActivity(enableBtIntent);
             btAdapter.enable();
-            return true;
+            try {
+                Thread.sleep( 2000 );
+            } catch (InterruptedException e) {
+            }
         }
-        else
-        {
-            return false;
-        }
+        return btAdapter.isEnabled();
     }
 
 }
