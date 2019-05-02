@@ -151,6 +151,13 @@ public class AccountFragment extends Fragment {
     //temp function to get account information
     public void getaccountinfo() {
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }).start();
+
         users.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -185,4 +192,5 @@ public class AccountFragment extends Fragment {
             }
         });
     }
+
 }
