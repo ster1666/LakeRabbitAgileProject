@@ -4,11 +4,16 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/title_account" />
+        android:title="@string/title_home" />
 
     <item
         android:id="@+id/navigation_notifications"
-        android:icon="@drawable/fui_ic_twitter_bird_white_24dp"
+        android:icon="@drawable/ic_payment_black_24dp"
         android:title="@string/title_payment_history" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_build_black_24dp"
+        android:title="@string/title_management" />
 
 </menu>
