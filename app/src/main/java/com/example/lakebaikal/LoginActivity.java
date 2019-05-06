@@ -150,7 +150,11 @@ public class LoginActivity extends AppCompatActivity {
     };
 
     public static boolean btaddress_regex(String input,Context context){
-        if(!Pattern.matches("..:..:..:..:..:..",input))
+        if(Pattern.matches("..:..:..:..:..:..",input))
+        {
+            return true;
+        }
+        else
         {
             try{
                 Toast.makeText(context, "Your input doesnt match a bluetooth address\n please try again...\n address example: XX:XX:XX:XX:XX:XX" +
@@ -159,11 +163,6 @@ public class LoginActivity extends AppCompatActivity {
             {
 
             }
-
-            return true;
-        }
-        else
-        {
             return false;
         }
     }
@@ -180,7 +179,7 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if(btaddress_regex( String.valueOf( input.getText() ),context))
+                        if(!btaddress_regex( String.valueOf( input.getText() ),context))
                         {
                             btAddrPopup(context,user,users,state);
                         }

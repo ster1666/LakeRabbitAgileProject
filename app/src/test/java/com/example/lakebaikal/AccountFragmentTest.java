@@ -1,20 +1,16 @@
 package com.example.lakebaikal;
 
 import android.content.Context;
-import android.test.ServiceTestCase;
-import android.test.mock.MockContext;
-import android.widget.EditText;
 
 import org.junit.Test;
 
-import java.lang.reflect.Method;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class AccountFragmentTest {
 
-    Context context = mock(Context.class);
+    Context context;
+
     @Test
     public void number_regex() {
         String correcttest="1234";
@@ -28,5 +24,13 @@ public class AccountFragmentTest {
 
         assertFalse( result );
 
+    }
+
+    @Test
+    public void addfundPopup() {
+    }
+
+    @Test
+    public void getaccountinfo() {
     }
 }
