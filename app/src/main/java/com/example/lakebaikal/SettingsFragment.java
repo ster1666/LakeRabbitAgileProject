@@ -1,5 +1,6 @@
 package com.example.lakebaikal;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,10 +43,12 @@ public class SettingsFragment extends Fragment {
 
     public static String TAG = "SettingsFragment";
     View fragment;
-    Button mSignOutBtn, mAddFundsBtn, mRegisterBtBtn;
+    Button mSignOutBtn, mAddFundsBtn, mRegisterBtBtn, mMapBtn;
     private FirebaseDatabase database;
     private DatabaseReference users;
     private static FirebaseUser user;
+
+    private static final int ERROR_DIALOG_REQUEST = 9001;
 
 
     public static SettingsFragment newInstance()  {
@@ -55,6 +60,12 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(isServicesOK()) {
+
+            /**/
+            MapButton();
+        }
     }
 
     @Override
@@ -65,6 +76,14 @@ public class SettingsFragment extends Fragment {
         mSignOutBtn = fragment.findViewById(R.id.sign_out_btn);
         mAddFundsBtn = fragment.findViewById(R.id.addfunds_btn);
         mRegisterBtBtn = fragment.findViewById(R.id.registerbt_btn);
+        mMapBtn = fragment.findViewById(R.id.btnMap);
+
+        mMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MapButton();
+            }
+        });
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
@@ -173,5 +192,35 @@ public class SettingsFragment extends Fragment {
             return null;
         }
     };
+
+
+
+    private void MapButton(){
+            Intent intent = new Intent(getContext(), MapActivity.class);
+            startActivity(intent);
+    }
+
+    public boolean isServicesOK(){
+        Log.d(TAG, "isServicesOK: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
+
+        if(available == ConnectionResult.SUCCESS){
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "isServicesOK: Google Play Services is working");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            //an error occured but we can resolve it
+            Log.d(TAG, "isServicesOK: an error occurred but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }else{
+            Toast.makeText(getContext(), "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
+
 
 }

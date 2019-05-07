@@ -15,35 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "1086615060978-323mtpt0oletur6nvqeenae8g2iivcim.apps.googleusercontent.com",
+          "client_id": "1086615060978-kcprvm5qhi17qlt9dj5jbmmmnekqa4hl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.lakebaikal",
-            "certificate_hash": "8dd56fb26b2d95d182eff0a1d43c539ee3f84d34"
+            "certificate_hash": "a5d3a9a60b55120b176bfa54a3c65c407391802e"
           }
         },
         {
-          "client_id": "1086615060978-v8m2hurijoaqla82urlthu5rpu4oukhk.apps.googleusercontent.com",
+          "client_id": "1086615060978-g4bmi449g2nasbfgt9qtlrigqm2vhmj2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.lakebaikal",
-            "certificate_hash": "4fdad6121bf6a5f0f68c06ba55a79b35c9cb633c"
-          }
-        },
-        {
-          "client_id": "1086615060978-7rsc7a5ag2kc1jq5lq6f050202fms9cf.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.lakebaikal",
-            "certificate_hash": "8ff398a41ba01108294afc1848c81093e4d1f365"
-          }
-        },
-        {
-          "client_id": "1086615060978-phga4ohoav8r1dn1cpu6bh1jlgcioahu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.lakebaikal",
-            "certificate_hash": "19cd4dcfec44d4a5aeb83851d2bedd4b35fa8773"
+            "certificate_hash": "96187e18abb256cc11f89ba4079b05f40653e3ba"
           }
         },
         {
@@ -55,11 +39,35 @@
           }
         },
         {
-          "client_id": "1086615060978-g4bmi449g2nasbfgt9qtlrigqm2vhmj2.apps.googleusercontent.com",
+          "client_id": "1086615060978-phga4ohoav8r1dn1cpu6bh1jlgcioahu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.lakebaikal",
-            "certificate_hash": "96187e18abb256cc11f89ba4079b05f40653e3ba"
+            "certificate_hash": "19cd4dcfec44d4a5aeb83851d2bedd4b35fa8773"
+          }
+        },
+        {
+          "client_id": "1086615060978-7rsc7a5ag2kc1jq5lq6f050202fms9cf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakebaikal",
+            "certificate_hash": "8ff398a41ba01108294afc1848c81093e4d1f365"
+          }
+        },
+        {
+          "client_id": "1086615060978-v8m2hurijoaqla82urlthu5rpu4oukhk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakebaikal",
+            "certificate_hash": "4fdad6121bf6a5f0f68c06ba55a79b35c9cb633c"
+          }
+        },
+        {
+          "client_id": "1086615060978-323mtpt0oletur6nvqeenae8g2iivcim.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lakebaikal",
+            "certificate_hash": "8dd56fb26b2d95d182eff0a1d43c539ee3f84d34"
           }
         },
         {

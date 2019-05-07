@@ -18,6 +18,9 @@
         completions."
     </string>
 
+    <string name="Google_Maps_API_Key">AIzaSyALpcOnt40Gu_-ypkAlbfPziyD7oH6ato4</string>
+
+
     <string name="account_fragment">Account</string>
     <string name="payment_history_fragment">Payment History</string>
 
