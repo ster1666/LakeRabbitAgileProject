@@ -74,16 +74,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(MapActivity.this);
-
-
-
     }
 
     private void GetDeviceLocation(){
         Log.d(TAG, "GetDeviceLocation: getting current location");
-
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
         try {
             if (mLocationPermissionGranted){
                 final Task location = mFusedLocationProviderClient.getLastLocation();
