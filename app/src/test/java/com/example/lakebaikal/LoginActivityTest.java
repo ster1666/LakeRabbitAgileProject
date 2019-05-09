@@ -1,15 +1,21 @@
 package com.example.lakebaikal;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.util.Log;
 
 import org.junit.Test;
+import org.mockito.Mock;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class LoginActivityTest {
-
+    @Mock
     Context context;
+
     @Test
     public void btaddress_regex() {
         String correcttest="38:54:32:84:22:f4";
@@ -24,12 +30,4 @@ public class LoginActivityTest {
         assertFalse( result );
     }
 
-    @Test
-    public void btexist() {
-
-    }
-
-    @Test
-    public void BTactive() {
-    }
 }

@@ -51,6 +51,8 @@ public class homeActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
 
+    public bluetoothActivity mblu;
+
 
     @Override
     //TODO MAKE A LOGOUT BUTTON
@@ -58,7 +60,13 @@ public class homeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bm = (BluetoothManager) getSystemService( Context.BLUETOOTH_SERVICE );
-        btAdapter = bm.getAdapter();
+        //btAdapter = bm.getAdapter();
+        mblu = new bluetoothActivity();
+        if(mblu.btcheck( this,btAdapter,bm))
+        {
+            btAdapter = bm.getAdapter();
+            mblu.BTactive( btAdapter );
+        }
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         database = FirebaseDatabase.getInstance();
@@ -165,8 +173,8 @@ public class homeActivity extends AppCompatActivity {
                     Log.d("LOG", "btcheck");
                     if(!btAdapter.isEnabled())
                     {
-                        LoginActivity.BTactive(btAdapter);
-
+                        //LoginActivity.BTactive(btAdapter);
+                        mblu.BTactive( btAdapter );
 
                     }
                     if(discoverBT(btAdapter)== 23)

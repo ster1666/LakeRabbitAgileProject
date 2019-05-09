@@ -50,15 +50,21 @@ public class LoginActivity extends AppCompatActivity {
     public BluetoothAdapter btAdapter = null;
 
     public static String  bt_addr = null;
+    public bluetoothActivity mblu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         bm = (BluetoothManager) getSystemService( Context.BLUETOOTH_SERVICE );
-        btAdapter = bm.getAdapter();
-        btcheck(this,btAdapter);
+        //btAdapter = bm.getAdapter();
+        mblu = new bluetoothActivity();
+        if(mblu.btcheck( this,btAdapter,bm))
+        {
+            btAdapter = bm.getAdapter();
+            mblu.BTactive( btAdapter );
+        }
+        //btcheck(this,btAdapter);
         googleSignInButton = findViewById(R.id.google_sign_in_button);
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
@@ -225,7 +231,7 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public static void btcheck(Context context, BluetoothAdapter btAdapter){
+/*    public static void btcheck(Context context, BluetoothAdapter btAdapter){
 
         if(btexist(context,btAdapter))
         {
@@ -263,7 +269,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         return btAdapter.isEnabled();
-    }
+    }*/
 
 }
 
