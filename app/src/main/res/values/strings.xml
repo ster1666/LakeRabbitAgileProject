@@ -18,7 +18,7 @@
         completions."
     </string>
 
-    <string name="Google_Maps_API_Key">inport key </string>
+    <string name="Google_Maps_API_Key">"AIzaSyBB3eOwaDYxE8Eg19bZu2V8QxFKyBJbbio"</string>
 
 
     <string name="account_fragment">Account</string>
@@ -38,4 +38,5 @@
     <string name="sign_out_btn">Sign Out</string>
     <string name="title_management">Management</string>
     <string name="delete_account_btn">Delete Account</string>
+    <string name="title_map">Map</string>
 </resources>

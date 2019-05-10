@@ -1,6 +1,7 @@
 package com.example.lakebaikal;
 
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
@@ -54,9 +55,10 @@ public class homeActivity extends AppCompatActivity {
     private BottomNavigationView bottomNavigationView;
     private int tollCost = 100;
 
+    FragmentManager mFragmentManager;
+    FragmentTransaction ft;
 
     @Override
-    //TODO MAKE A LOGOUT BUTTON
     //TODO MAKE HISTORY VIEW THAT SAVES EVENTS BETWEEN LOGIN?
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +70,8 @@ public class homeActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
         paymentHistory = database.getReference("PaymentHistory");
+
+
 
         get_userBtaddr();
         discoverBT();
@@ -99,6 +103,9 @@ public class homeActivity extends AppCompatActivity {
                         break;
                     case R.id.navigation_settings:
                         selectedFragment = SettingsFragment.newInstance();
+                        break;
+                    case R.id.navigation_map:
+                        selectedFragment = MapFragment.newInstance();
                         break;
                 }
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -347,7 +354,8 @@ public class homeActivity extends AppCompatActivity {
     }
 */
 
-
-
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }

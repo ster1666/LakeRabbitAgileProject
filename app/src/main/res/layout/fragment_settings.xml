@@ -30,12 +30,5 @@
             android:layout_below="@id/addfunds_btn"
             android:text="@string/registerbt_btn" />
 
-        <Button
-            android:id="@+id/btnMap"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Map"
-            android:layout_below="@id/registerbt_btn"/>
-
     </RelativeLayout>
 </FrameLayout>

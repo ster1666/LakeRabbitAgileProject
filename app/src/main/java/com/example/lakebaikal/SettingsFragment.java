@@ -61,11 +61,11 @@ public class SettingsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(isServicesOK()) {
+        /*if(isServicesOK()) {
 
-            /**/
+
             MapButton();
-        }
+        }*/
     }
 
     @Override
@@ -76,14 +76,6 @@ public class SettingsFragment extends Fragment {
         mSignOutBtn = fragment.findViewById(R.id.sign_out_btn);
         mAddFundsBtn = fragment.findViewById(R.id.addfunds_btn);
         mRegisterBtBtn = fragment.findViewById(R.id.registerbt_btn);
-        mMapBtn = fragment.findViewById(R.id.btnMap);
-
-        mMapBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                MapButton();
-            }
-        });
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
