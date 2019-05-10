@@ -43,9 +43,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "LoginActivity";
 
-    public static boolean btaddrstate=true;
-    public static boolean enableBT=false;
-
     private FirebaseDatabase database;
     private DatabaseReference users;
 
@@ -53,15 +50,21 @@ public class LoginActivity extends AppCompatActivity {
     public BluetoothAdapter btAdapter = null;
 
     public static String  bt_addr = null;
+    public bluetoothActivity mblu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         bm = (BluetoothManager) getSystemService( Context.BLUETOOTH_SERVICE );
-        btAdapter = bm.getAdapter();
-        btcheck(this,btAdapter);
+        //btAdapter = bm.getAdapter();
+        mblu = new bluetoothActivity();
+        if(mblu.btcheck( this,btAdapter,bm))
+        {
+            btAdapter = bm.getAdapter();
+            mblu.BTactive( btAdapter );
+        }
+        //btcheck(this,btAdapter);
         googleSignInButton = findViewById(R.id.google_sign_in_button);
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
@@ -111,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                         if(response.isNewUser())
                         {
                             Log.d(TAG, "onActivityResult:                                       NEW");
-                            btAddrPopup(LoginActivity.this,user,users);
+                            btAddrPopup(LoginActivity.this,user,users,true);
 
                         }
                         else
@@ -151,8 +154,26 @@ public class LoginActivity extends AppCompatActivity {
 
         }
     };
+
+    public static boolean btaddress_regex(String input,Context context){
+        if(Pattern.matches("..:..:..:..:..:..",input))
+        {
+            return true;
+        }
+        else
+        {
+            try{
+                Toast.makeText(context, "Your input doesnt match a bluetooth address\n please try again...\n address example: XX:XX:XX:XX:XX:XX" +
+                        "\n your see your bluetooth address in mobile settings", Toast.LENGTH_LONG).show();
+            }catch(Exception e)
+            {
+
+            }
+            return false;
+        }
+    }
     //TODO USER GETDISPLAYNAME DOESNT WORK 
-    public static void btAddrPopup(final Context context, final FirebaseUser user, final DatabaseReference users) {
+    public static void btAddrPopup(final Context context, final FirebaseUser user, final DatabaseReference users, final boolean state) {
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
         alertDialog.setTitle("Bluetooth");
         alertDialog.setMessage("Please register your bluetooth adress");
@@ -164,15 +185,14 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        if(!Pattern.matches("..:..:..:..:..:..",input.getText()))
+                        if(!btaddress_regex( String.valueOf( input.getText() ),context))
                         {
-                            Toast.makeText(context, "Your input doesnt match a bluetooth address\n please try again...\n address example: XX:XX:XX:XX:XX:XX\n your see your bluetooth address in mobile settings", Toast.LENGTH_LONG).show();
-                            btAddrPopup(context,user,users);
+                            btAddrPopup(context,user,users,state);
                         }
                         else
                         {
                             bt_addr =String.valueOf(input.getText().toString().toUpperCase());
-                            if(btaddrstate){
+                            if(state){
                                 Log.d(TAG, "btaddr: new");
                                 users.child(bt_addr.toUpperCase()).setValue(new User(user.getUid(), user.getDisplayName(), user.getEmail(), bt_addr,0));
                                 Toast.makeText(context, "Account registered.", Toast.LENGTH_LONG).show();
@@ -211,36 +231,45 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public static void btcheck(Context context, final BluetoothAdapter btAdapter){
+/*    public static void btcheck(Context context, BluetoothAdapter btAdapter){
+
+        if(btexist(context,btAdapter))
+        {
+            BTactive(btAdapter);
+        }
+        else
+        {
+            //DONT SUPPORT BLUETOOTH
+            Log.d(TAG, "btcheck: DONT SUPPORT");
+        }
+    }
+    public static Boolean btexist(Context context, BluetoothAdapter btAdapter){
         // Check for Bluetooth support and then check to make sure it is turned on
         if (btAdapter == null) {
             Toast.makeText(context, "Bluetooth is not available", Toast.LENGTH_LONG).show();
+            return false;
+
         }
         else {
+            return true;
 
-            if (!btAdapter.isEnabled()) {
-                //ask user to turn on bluetooth
-                if(!enableBT)
-                {
-                    enableBT=true;
-                    Log.d(TAG, "btcheck: AGREED ON USING BLUETOOTH");
-                    Intent enableBtIntent = new Intent( BluetoothAdapter.ACTION_REQUEST_ENABLE );
-                    context.startActivity(enableBtIntent);
-
-                }
-                else
-                {
-                    //TODO IF USER REFUSE TO AGREE ON BLUETOOTH
-                }
-
-            }
-            else
-            {
-                enableBT=true;
-            }
         }
     }
-
+    public static boolean BTactive(BluetoothAdapter btAdapter)
+    {
+        if (!btAdapter.isEnabled()) {
+            //ask user to turn on bluetooth
+            Log.d(TAG, "btcheck: BLUETOOTH Active");
+            //Intent enableBtIntent = new Intent( BluetoothAdapter.ACTION_REQUEST_ENABLE );
+            //context.startActivity(enableBtIntent);
+            btAdapter.enable();
+            try {
+                Thread.sleep( 2000 );
+            } catch (InterruptedException e) {
+            }
+        }
+        return btAdapter.isEnabled();
+    }*/
 
 }
 

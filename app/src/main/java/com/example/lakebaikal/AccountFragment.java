@@ -1,6 +1,7 @@
 package com.example.lakebaikal;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,6 +28,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.regex.Pattern;
 
 import static com.example.lakebaikal.LoginActivity.bt_addr;
 
@@ -67,14 +71,31 @@ public class AccountFragment extends Fragment {
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
 
+
         getaccountinfo();
 
         // Inflate the layout for this fragment
         return fragment;
     }
+    public static boolean number_regex(String input, Context context){
+        if(Pattern.matches("[0-9]+",input))
+        {
+
+            return true;
+        }
+        else
+        {
+            try{
+                Toast.makeText(context, "Your input must be a number", Toast.LENGTH_LONG).show();
+            }catch(Exception e)
+            {
 
 
-
+            }
+            return false;
+        }
+    }
+  
     //temp function to get account information
     public void getaccountinfo() {
 
