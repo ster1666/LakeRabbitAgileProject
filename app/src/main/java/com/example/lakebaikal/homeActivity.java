@@ -124,10 +124,8 @@ public class homeActivity extends AppCompatActivity {
         autoenableBT(btAdapter);
         discoverBT(btAdapter);
     }
-    //TODO NOT REFACTORED OK...
     public boolean get_userBtaddr(DatabaseReference users,final FirebaseUser user)
     {
-
         users.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

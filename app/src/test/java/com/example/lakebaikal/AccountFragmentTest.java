@@ -26,11 +26,4 @@ public class AccountFragmentTest {
 
     }
 
-    @Test
-    public void addfundPopup() {
-    }
-
-    @Test
-    public void getaccountinfo() {
-    }
 }
