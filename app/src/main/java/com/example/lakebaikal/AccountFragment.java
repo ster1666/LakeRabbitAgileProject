@@ -44,7 +44,6 @@ public class AccountFragment extends Fragment {
 
     ImageView mProfileImage;
     TextView mAccountInfoText;
-    Button mAddFundsBtn, mRegisterBtBtn;
 
     private FirebaseDatabase database;
     private DatabaseReference users;
@@ -67,26 +66,11 @@ public class AccountFragment extends Fragment {
         fragment = inflater.inflate(R.layout.fragment_account, container, false);
         mProfileImage = fragment.findViewById(R.id.profileImage);
         mAccountInfoText = fragment.findViewById(R.id.account_info);
-        mAddFundsBtn = fragment.findViewById(R.id.addfunds_btn);
-        mRegisterBtBtn = fragment.findViewById(R.id.registerbt_btn);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
 
-        mAddFundsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addfundPopup(getContext());
-            }
-        });
-
-        mRegisterBtBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LoginActivity.btAddrPopup(getContext(),user,users,false);
-            }
-        });
 
         getaccountinfo();
 
@@ -106,75 +90,21 @@ public class AccountFragment extends Fragment {
             }catch(Exception e)
             {
 
+
             }
             return false;
         }
     }
-    public void addfundPopup(final Context context)
-    {
-        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Account balance");
-        alertDialog.setMessage("add balance to your account");
-
-        final EditText input = new EditText(getContext());
-        input.setInputType(InputType.TYPE_CLASS_PHONE);
-        input.setFilters(new InputFilter[] { fundfilter });
-        alertDialog.setView(input);
-
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, int which) {
-
-                        if(!number_regex( String.valueOf( input.getText() ),context))
-                        {
-                            addfundPopup(context);
-                        }
-                        else
-                        {
-                            final Integer tfund = Integer.parseInt(input.getText().toString());
-
-                            Log.d(TAG, "onClick: "+tfund);
-                            users.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    {
-                                        int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
-                                        tempbalance = tempbalance + tfund;// COST 100 WHEN PASSES
-                                        users.child(bt_addr).child("balance").setValue(tempbalance);
-                                        dialog.dismiss();
-                                    }}
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                }
-                            });
-                        }
-                    }
-                });
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
-    }
-
-    public static InputFilter fundfilter = new InputFilter() {
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            String blockCharacterSet = "+-:;,.#*Nn/() ";
-            if (source != null && blockCharacterSet.contains(("" + source))) {
-                Log.d("LOG", "filter: ");
-                return "";
-
-            }
-            return null;
-        }
-    };
-
+  
     //temp function to get account information
     public void getaccountinfo() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        }).start();
 
         users.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -210,4 +140,5 @@ public class AccountFragment extends Fragment {
             }
         });
     }
+
 }

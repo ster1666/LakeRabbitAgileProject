@@ -44,12 +44,13 @@ public class homeActivity extends AppCompatActivity {
     public static BluetoothAdapter btAdapter = null;
 
     private FirebaseDatabase database;
-    private DatabaseReference users;
+    private DatabaseReference users, paymentHistory;
 
     public static boolean compare_state=false;
     private static FirebaseUser user;
 
     private BottomNavigationView bottomNavigationView;
+    private int tollCost = 100;
 
     public bluetoothActivity mblu;
 
@@ -71,6 +72,7 @@ public class homeActivity extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
+        paymentHistory = database.getReference("PaymentHistory");
 
         if(!get_userBtaddr(users,user))
         {
@@ -94,6 +96,9 @@ public class homeActivity extends AppCompatActivity {
                         break;
                     case R.id.navigation_notifications:
                         selectedFragment = PaymentHistoryFragment.newInstance();
+                        break;
+                    case R.id.navigation_settings:
+                        selectedFragment = SettingsFragment.newInstance();
                         break;
                 }
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -174,6 +179,7 @@ public class homeActivity extends AppCompatActivity {
                         //LoginActivity.BTactive(btAdapter);
                         mblu.BTactive( btAdapter );
 
+
                     }
                     if(discoverBT(btAdapter)== 23)
                     {
@@ -187,6 +193,7 @@ public class homeActivity extends AppCompatActivity {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
+
                     }
                 }
             }
@@ -295,6 +302,7 @@ public class homeActivity extends AppCompatActivity {
                 {
                     Log.d(TAG, "run:                                        CHECKTIMESTAMP!");
                         compareTimestamps( users );
+
                     try {
                         Thread.sleep(10000);//HOW OFTEN TO CHECK TIMESTAMP
                     } catch (InterruptedException e) {
@@ -306,5 +314,9 @@ public class homeActivity extends AppCompatActivity {
         }).start();
     }
 
+    public void updatePaymentHistory(String timeStamp){
+        paymentHistory.child(bt_addr).push()
+                .setValue(new PaymentHistory(timeStamp, tollCost));
+    }
 
 }
