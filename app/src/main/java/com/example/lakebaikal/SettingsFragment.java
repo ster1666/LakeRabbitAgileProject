@@ -90,7 +90,7 @@ public class SettingsFragment extends Fragment {
         mRegisterBtBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LoginActivity.btAddrPopup(getContext(),user,users);
+                LoginActivity.btAddrPopup(getContext(),user,users,false);
             }
         });
 
