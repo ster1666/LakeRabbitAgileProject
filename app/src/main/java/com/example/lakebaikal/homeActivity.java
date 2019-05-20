@@ -7,7 +7,10 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -51,13 +54,13 @@ public class homeActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference users, paymentHistory;
 
-    public static boolean compare_state=false;
+    public static boolean compare_state=false, gps_provider_state=true;
     private static FirebaseUser user;
 
     private BottomNavigationView bottomNavigationView;
     private int tollCost = 100;
 
-
+    public LocationManager lm;
     public bluetoothActivity mblu;
 
 
@@ -69,6 +72,7 @@ public class homeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        lm =(LocationManager) getSystemService(Context.LOCATION_SERVICE);
         bm = (BluetoothManager) getSystemService( Context.BLUETOOTH_SERVICE );
         //btAdapter = bm.getAdapter();
         mblu = new bluetoothActivity();
@@ -110,21 +114,44 @@ public class homeActivity extends AppCompatActivity {
 
                 switch (item.getItemId()){
                     case R.id.navigation_home:
+                        gps_provider_state=true;
                         selectedFragment = AccountFragment.newInstance();
                         break;
                     case R.id.navigation_notifications:
+                        gps_provider_state=true;
                         selectedFragment = PaymentHistoryFragment.newInstance();
                         break;
                     case R.id.navigation_settings:
+                        gps_provider_state=true;
                         selectedFragment = SettingsFragment.newInstance();
                         break;
                     case R.id.navigation_map:
-                        selectedFragment = MapFragment.newInstance();
+                        //TODO MUST HAVE POSITION ON
+                        if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+                        {
+                            Log.d(TAG, "onNavigationItemSelected: OOKOKOKOKOKOKO");
+                            gps_provider_state=true;
+                            selectedFragment = MapFragment.newInstance();
+                        }
+                        else
+                        {
+                            Log.d(TAG, "onNavigationItemSelected: NOOOOOOOOOOOOOOOOOO");
+                            gps_provider_state=false;
+
+                            Intent enableGPSIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(enableGPSIntent);
+
+
+                        }
+
                         break;
                 }
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, selectedFragment);
-                transaction.commit();
+                if(gps_provider_state)
+                {
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, selectedFragment);
+                    transaction.commit();
+                }
                 return true;
             }
         });
@@ -150,6 +177,8 @@ public class homeActivity extends AppCompatActivity {
         autoenableBT(btAdapter);
         discoverBT(btAdapter);
     }
+
+
     public boolean get_userBtaddr(DatabaseReference users,final FirebaseUser user)
     {
         users.addListenerForSingleValueEvent(new ValueEventListener() {

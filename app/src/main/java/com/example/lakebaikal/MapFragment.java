@@ -184,9 +184,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()){
                             Log.d(TAG, "OnComplete: Found Location");
-                            Location currentLocation = (Location) task.getResult();
+                            try{
+                                Location currentLocation = (Location) task.getResult();
 
-                            moveMaps(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),15f);
+                                moveMaps(new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude()),15f);
+                            }catch(Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+
 
                         }
                         else {

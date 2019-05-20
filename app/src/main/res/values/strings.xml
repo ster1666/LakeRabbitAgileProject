@@ -26,7 +26,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="registerbt_btn">Register Address</string>
+    <string name="registerbt_btn">Register BTAddress</string>
     <string name="addfunds_btn">Add Funds</string>
     <string name="account_info">Account Information</string>
     <string name="payment_date">Payment Date</string>

@@ -34,6 +34,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.regex.Pattern;
+
 import static com.example.lakebaikal.LoginActivity.bt_addr;
 
 
@@ -138,27 +140,44 @@ public class SettingsFragment extends Fragment {
         input.setFilters(new InputFilter[] { fundfilter });
         alertDialog.setView(input);
 
+
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int which) {
 
 
                         final Integer tfund = Integer.parseInt(input.getText().toString());
+                        if(!number_regex(input.getText().toString(),getContext()))
+                        {
+                            addfundPopup();
+                        }
+                        else {
 
-                        Log.d(TAG, "onClick: "+tfund);
-                        users.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                {
-                                    int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
-                                    tempbalance = tempbalance + tfund;// COST 100 WHEN PASSES
-                                    users.child(bt_addr).child("balance").setValue(tempbalance);
-                                    dialog.dismiss();
-                                }}
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-                            }
-                        });
+
+                            Log.d(TAG, "onClick: " + tfund);
+                            users.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    {
+                                        int tempbalance = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("balance").getValue()));
+                                        tempbalance = tempbalance + tfund;// COST 100 WHEN PASSES
+                                        users.child(bt_addr).child("balance").setValue(tempbalance);
+                                        try{
+                                            Toast.makeText(getContext(), tfund+ " has been added to your balance.", Toast.LENGTH_LONG).show();
+                                        }catch(Exception e)
+                                        {
+
+
+                                        }
+                                        dialog.dismiss();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
+                        }
 
                     }
                 });
@@ -184,6 +203,25 @@ public class SettingsFragment extends Fragment {
             return null;
         }
     };
+
+    public static boolean number_regex(String input, Context context){
+        if(Pattern.matches("[0-9]+",input))
+        {
+
+            return true;
+        }
+        else
+        {
+            try{
+                Toast.makeText(context, "Your input must be a number", Toast.LENGTH_LONG).show();
+            }catch(Exception e)
+            {
+
+
+            }
+            return false;
+        }
+    }
 
 
 

@@ -77,24 +77,7 @@ public class AccountFragment extends Fragment {
         // Inflate the layout for this fragment
         return fragment;
     }
-    public static boolean number_regex(String input, Context context){
-        if(Pattern.matches("[0-9]+",input))
-        {
 
-            return true;
-        }
-        else
-        {
-            try{
-                Toast.makeText(context, "Your input must be a number", Toast.LENGTH_LONG).show();
-            }catch(Exception e)
-            {
-
-
-            }
-            return false;
-        }
-    }
   
     //temp function to get account information
     public void getaccountinfo() {
