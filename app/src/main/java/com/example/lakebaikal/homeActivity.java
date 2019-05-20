@@ -61,9 +61,6 @@ public class homeActivity extends AppCompatActivity {
     public bluetoothActivity mblu;
 
 
-    @Override
-    //TODO MAKE A LOGOUT BUTTON
-
     FragmentManager mFragmentManager;
     FragmentTransaction ft;
 
