@@ -73,21 +73,36 @@ public class AccountFragment extends Fragment {
 
 
         getaccountinfo();
+        updateinfo();
 
         // Inflate the layout for this fragment
         return fragment;
     }
 
-  
-    //temp function to get account information
-    public void getaccountinfo() {
-
+    public void updateinfo()
+    {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                while(!Thread.currentThread().isInterrupted())
+                {
+                    if(homeActivity.accountinfo)
+                    {
+                        try{
+                            getaccountinfo();
+                        }catch(Exception e)
+                        {
+
+                        }
+                        homeActivity.accountinfo=false;
+                    }
+                }
 
             }
         }).start();
+    }
+    //temp function to get account information
+    public void getaccountinfo() {
 
         users.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

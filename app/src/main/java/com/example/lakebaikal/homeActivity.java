@@ -54,7 +54,7 @@ public class homeActivity extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference users, paymentHistory;
 
-    public static boolean compare_state=false, gps_provider_state=true;
+    public static boolean compare_state=false, gps_provider_state=true, accountinfo=false;
     private static FirebaseUser user;
 
     private BottomNavigationView bottomNavigationView;
@@ -245,6 +245,7 @@ public class homeActivity extends AppCompatActivity {
                         e.printStackTrace();
 
                     }
+
                 }
             }
         }).start();
@@ -319,6 +320,8 @@ public class homeActivity extends AppCompatActivity {
                             int temppasses = Integer.valueOf(String.valueOf(dataSnapshot.child(bt_addr).child("passes").getValue()));
                             temppasses = temppasses +1;
                             users.child(bt_addr).child("passes").setValue(temppasses);
+                            updatePaymentHistory(timestamp);
+                            accountinfo=true;
 
 
                         }
@@ -368,8 +371,8 @@ public class homeActivity extends AppCompatActivity {
         paymentHistory.child(bt_addr).push()
                 .setValue(new PaymentHistory(timeStamp, tollCost));
 
-
     }
+
 /*
 
     public boolean isServicesOK(){
